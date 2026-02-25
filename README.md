@@ -17,6 +17,21 @@
 | Biome + lefthook | Линтинг, форматирование, pre-commit хуки |
 | Docker Compose | Деплой |
 
+## Переменные окружения
+
+```bash
+cp .env.example .env
+```
+
+| Переменная | Обязательная | Описание |
+|---|---|---|
+| `DATABASE_URL` | да | Строка подключения к PostgreSQL |
+| `WEBHOOK_SECRET` | да | Секрет для входящих вебхуков |
+| `TELEGRAM_BOT_TOKEN` | нет | Токен Telegram-бота (из [@BotFather](https://t.me/BotFather)) |
+| `TELEGRAM_CHAT_ID` | нет | ID чата для уведомлений |
+
+Без Telegram-переменных приложение работает — просто не шлёт уведомления.
+
 ## Быстрый старт (локально)
 
 Требования: [Node.js 22+](https://nodejs.org/), [Bun](https://bun.sh/), [Docker](https://docs.docker.com/get-docker/), [Git](https://git-scm.com/).
@@ -71,21 +86,6 @@ bash scripts/demo.sh https://test2-realpepin.amvera.io
 
 После автоматических проверок — откройте сайт в браузере, заполните форму и убедитесь, что уведомление пришло в Telegram.
 
-## Переменные окружения
-
-```bash
-cp .env.example .env
-```
-
-| Переменная | Обязательная | Описание |
-|---|---|---|
-| `DATABASE_URL` | да | Строка подключения к PostgreSQL |
-| `WEBHOOK_SECRET` | да | Секрет для входящих вебхуков |
-| `TELEGRAM_BOT_TOKEN` | нет | Токен Telegram-бота (из [@BotFather](https://t.me/BotFather)) |
-| `TELEGRAM_CHAT_ID` | нет | ID чата для уведомлений |
-
-Без Telegram-переменных приложение работает полностью — просто не шлёт уведомления.
-
 ## API
 
 ### Server Action: createLead
@@ -111,13 +111,13 @@ curl -X POST http://localhost:3000/api/events \
 # Первый запрос → 201
 curl -X POST http://localhost:3000/api/webhook \
   -H "Content-Type: application/json" \
-  -H "x-webhook-secret: your-secret" \
+  -H "x-webhook-secret: demo-secret-2026" \
   -d '{"idempotencyKey":"evt-123","eventType":"payment_success","payload":{"amount":4900}}'
 
 # Повтор с тем же ключом → 200, duplicate: true
 curl -X POST http://localhost:3000/api/webhook \
   -H "Content-Type: application/json" \
-  -H "x-webhook-secret: your-secret" \
+  -H "x-webhook-secret: demo-secret-2026" \
   -d '{"idempotencyKey":"evt-123","eventType":"payment_success","payload":{"amount":4900}}'
 
 # Без секрета → 401
@@ -130,7 +130,7 @@ curl -X POST http://localhost:3000/api/webhook \
 
 ```bash
 cp .env.example .env
-# заполните WEBHOOK_SECRET, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+# заполните TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID
 docker compose up --build -d
 ```
 
@@ -155,9 +155,3 @@ src/
 ├── lib/                      # prisma, telegram, tracking
 └── content/landing.ts        # все тексты лендинга (ru)
 ```
-
-## DX
-
-- **Biome** — `bun run lint` / `bun run format`
-- **lefthook** — pre-commit: Biome + TypeScript проверки
-- **Prisma Studio** — `bun run db:studio`
