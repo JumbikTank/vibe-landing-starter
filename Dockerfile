@@ -31,4 +31,4 @@ USER nextjs
 EXPOSE 80
 ENV PORT=80 HOSTNAME="0.0.0.0"
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+CMD ["sh", "-c", "node node_modules/prisma/build/index.js migrate deploy && node server.js"]

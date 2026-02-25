@@ -3,15 +3,15 @@ services:
     image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: vibe_user
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: vibe_landing
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U vibe_user"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -22,7 +22,7 @@ services:
     ports:
       - "3000:80"
     environment:
-      DATABASE_URL: "postgresql://postgres:postgres@db:5432/vibe_landing?schema=public"
+      DATABASE_URL: "postgresql://vibe_user:password@db:5432/vibe_landing?schema=public"
       WEBHOOK_SECRET: "${WEBHOOK_SECRET:-change-me-to-random-string}"
       TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN:-}"
       TELEGRAM_CHAT_ID: "${TELEGRAM_CHAT_ID:-}"
