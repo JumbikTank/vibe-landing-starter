@@ -12,7 +12,7 @@
 | TypeScript (strict) | Типизация |
 | Tailwind CSS v4 + Framer Motion | Стили и анимации |
 | Aceternity UI | Визуальные эффекты (лучи, вихри, карточки) |
-| Prisma + PostgreSQL 17 | ORM + база данных |
+| Prisma 6 + PostgreSQL 17 | ORM + база данных (Prisma 7 ломает обратную совместимость — используем 6) |
 | Bun | Пакетный менеджер |
 | Biome + lefthook | Линтинг, форматирование, pre-commit хуки |
 | Docker Compose | Деплой |
