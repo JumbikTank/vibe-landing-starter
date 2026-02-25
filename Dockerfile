@@ -17,7 +17,7 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-RUN npm install -g prisma
+RUN npm install -g prisma@6
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
