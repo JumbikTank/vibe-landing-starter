@@ -1,320 +1,163 @@
 # Vibe Landing Starter
 
-Лендинг с лид-формой, аналитикой, вебхуками и Telegram-уведомлениями.
+Лендинг с лид-формой, аналитикой конверсий, вебхуками и Telegram-уведомлениями.
+
+**Живой деплой:** https://test2-realpepin.amvera.io
 
 ## Стек
 
-- **Next.js 15** (App Router) — фронт + бэк в одном проекте
-- **TypeScript** — строгая типизация, подсказки в редакторе
-- **Tailwind CSS v4** — стили прямо в разметке, без отдельных CSS-файлов
-- **Framer Motion** — анимации
-- **Prisma** — ORM (прослойка между кодом и базой данных, чтобы не писать SQL руками)
-- **PostgreSQL** — база данных
-- **Docker Compose** — запуск приложения и базы одной командой
+| Технология | Роль |
+|---|---|
+| Next.js 15 (App Router) | Фронтенд + бэкенд в одном проекте |
+| TypeScript (strict) | Типизация |
+| Tailwind CSS v4 + Framer Motion | Стили и анимации |
+| Aceternity UI | Визуальные эффекты (лучи, вихри, карточки) |
+| Prisma + PostgreSQL 17 | ORM + база данных |
+| Bun | Пакетный менеджер |
+| Biome + lefthook | Линтинг, форматирование, pre-commit хуки |
+| Docker Compose | Деплой |
 
-## Что нужно установить
+## Быстрый старт (локально)
 
-Перед началом убедитесь, что у вас есть:
-
-| Инструмент | Зачем | Как проверить | Как установить |
-|---|---|---|---|
-| **Node.js 22+** | Запуск приложения | `node -v` | [nodejs.org](https://nodejs.org/) |
-| **Bun** | Быстрый пакетный менеджер (вместо npm) | `bun -v` | `curl -fsSL https://bun.sh/install \| bash` |
-| **Docker** | Контейнеры для деплоя | `docker -v` | [docker.com](https://docs.docker.com/get-docker/) |
-| **Git** | Управление кодом | `git -v` | [git-scm.com](https://git-scm.com/) |
-
-> Не знакомы с терминалом? В VS Code откройте его через меню **Terminal → New Terminal** (или `Ctrl+``). Все команды ниже вводите именно туда.
-
-## Быстрый старт
-
-### Локально (dev)
+Требования: [Node.js 22+](https://nodejs.org/), [Bun](https://bun.sh/), [Docker](https://docs.docker.com/get-docker/), [Git](https://git-scm.com/).
 
 ```bash
-# 1. Скачать проект и перейти в папку
-git clone <repo-url> && cd vibe-landing-starter
-
-# 2. Установить зависимости (библиотеки, от которых зависит проект)
+git clone https://github.com/JumbikTank/vibe-landing-starter.git
+cd vibe-landing-starter
 bun install
-
-# 3. Создать файл с настройками
-cp .env.example .env
-# Откройте .env в редакторе и укажите DATABASE_URL — строку подключения к PostgreSQL.
-# Если PostgreSQL не установлен локально — используйте Docker Compose (следующий раздел).
-
-# 4. Создать таблицы в базе данных
-# «Миграция» — это скрипт, который создаёт или обновляет структуру таблиц.
-# Данные при этом не теряются — меняется только схема.
-bunx prisma migrate dev --name init
-
-# 5. (Необязательно) Заполнить базу тестовыми данными
-bun prisma/seed.ts
-
-# 6. Запустить
-bun dev
+cp .env.example .env   # отредактируйте DATABASE_URL если нужен свой Postgres
 ```
 
-Откройте [http://localhost:3000](http://localhost:3000).
-
-### Docker Compose
-
-Если не хотите ставить PostgreSQL отдельно — Docker поднимет и базу, и приложение:
+### С Docker (рекомендуется)
 
 ```bash
-# 1. Создать файл с настройками
-cp .env.example .env
+docker compose up --build -d     # поднимет Postgres + приложение
+```
 
-# 2. Собрать и запустить всё (база + приложение)
-docker compose up --build -d
+Откройте http://localhost:3000.
 
-# 3. Проверить что работает
+### Без Docker
+
+Нужен запущенный PostgreSQL. Укажите `DATABASE_URL` в `.env`, затем:
+
+```bash
+bunx prisma migrate dev --name init   # создать таблицы
+bun prisma/seed.ts                    # (опционально) тестовые данные
+bun dev                               # запустить на :3000
+```
+
+## Демо-скрипт (проверка за 2 минуты)
+
+```bash
+# Локально
 bash scripts/demo.sh
+
+# Живой деплой (укажите свой WEBHOOK_SECRET)
+WEBHOOK_SECRET="ваш-секрет" bash scripts/demo.sh https://test2-realpepin.amvera.io
 ```
 
-Приложение будет на [http://localhost:3000](http://localhost:3000), база — внутри Docker-контейнера.
-
-## Деплой на Amvera Cloud
-
-Amvera — российский облачный хостинг. Бесплатного тарифа хватит для демо.
-
-### Шаг 1. Регистрация
-
-Зарегистрируйтесь на [amvera.ru](https://amvera.ru).
-
-### Шаг 2. Создайте базу данных
-
-Откройте раздел **«Управляемые сервисы»** → **«Создать»** → **PostgreSQL** (тариф «Начальный»).
-
-Заполните форму:
-- **Postgres version**: оставьте как есть (17.5)
-- **Имя создаваемой БД**: `vibe_landing`
-- **Имя пользователя**: `vibe_user`
-- **Пароль пользователя**: придумайте пароль **на латинице** (кириллица сломает строку подключения)
-- **Размер кластера СУБД**: `1`
-- **Superuser Access**: не включайте
-- Остальное не трогайте
-
-### Шаг 3. Скопируйте адрес базы
-
-После создания БД откройте вкладку **«Инфо»**. Найдите строку **«Доменное имя для чтения/записи»** — она выглядит так:
+Скрипт проверяет: лендинг отдаёт 200, события записываются, вебхук без секрета отклоняется (401), с секретом записывается (201), дубль не создаётся (200).
 
 ```
-amvera-ваш-логин-cnpg-имя-бд-rw
+=== Vibe Landing Starter — Demo ===
+✓ GET / returns 200
+✓ POST /api/events returns 201
+✓ POST /api/webhook without secret returns 401
+✓ POST /api/webhook with secret returns 201
+✓ POST /api/webhook duplicate returns 200
+
+Результат: 5 passed, 0 failed
 ```
 
-Например: `amvera-realpepin-cnpg-vibe-landing-rw`. Это внутренний адрес базы — по нему приложение будет к ней подключаться. Запишите — понадобится на шаге 7.
-
-Из всех данных собирается строка подключения `DATABASE_URL`:
-```
-Шаблон:  postgresql://ПОЛЬЗОВАТЕЛЬ:ПАРОЛЬ@ХОСТ:5432/ИМЯ_БД?schema=public
-Пример:  postgresql://vibe_user:my5ecretPass@amvera-realpepin-cnpg-vibe-landing-rw:5432/vibe_landing?schema=public
-```
-
-### Шаг 4. Создайте проект
-
-В главном меню Amvera → **«Создать проект»** (тип: приложение, тариф «Начальный»).
-
-### Шаг 5. Загрузите код через git
-
-На шаге «Загрузка данных» выберите **«Через git»**.
-
-Откройте терминал в папке проекта. Вы в правильном месте, если путь заканчивается на название проекта:
-```
-user@pc:~/vibe-landing-starter$
-```
-
-Если в проекте ещё нет git — инициализируйте:
-```bash
-touch public/.gitkeep   # git не трекает пустые папки, а сборке нужна public/
-git init && git add -A && git commit -m "init"
-```
-
-Скопируйте команду из интерфейса Amvera (кнопка «Скопировать») и выполните:
-```bash
-git remote add amvera <URL из интерфейса Amvera>
-git push amvera master
-```
-
-> Пишите именно `git push amvera master`, а не просто `git push` — нужно явно указать, куда отправляем.
->
-> Терминал спросит логин и пароль — введите данные от аккаунта Amvera.
-
-### Шаг 6. Конфигурация
-
-Пропустите этот шаг — Amvera автоматически найдёт `Dockerfile` в проекте и поймёт, как его собирать.
-
-### Шаг 7. Настройте переменные окружения
-
-Переменные окружения — это настройки, которые приложение читает при запуске: пароли, токены, адреса. Они хранятся отдельно от кода, чтобы не попасть в git.
-
-В настройках проекта откройте **«Переменные»**. Проще всего: создайте файл `.env` на своём компьютере с содержимым ниже и нажмите **«Подгрузить .env»**:
-
-```env
-DATABASE_URL=postgresql://vibe_user:ВАШ_ПАРОЛЬ@ХОСТ-ИЗ-ШАГА-3:5432/vibe_landing?schema=public
-WEBHOOK_SECRET=случайная-строка
-TELEGRAM_BOT_TOKEN=токен-бота
-TELEGRAM_CHAT_ID=id-чата
-```
-
-**Как заполнить каждую переменную:**
-
-- **`DATABASE_URL`** — строка подключения к базе. Подставьте пароль из шага 2 и хост из шага 3
-- **`WEBHOOK_SECRET`** — любая случайная строка. Сгенерируйте на [1password.com/password-generator](https://1password.com/password-generator/) (длина 20+, без спецсимволов). Этот секрет защищает вебхук-эндпоинт от чужих запросов
-- **`TELEGRAM_BOT_TOKEN`** и **`TELEGRAM_CHAT_ID`** — см. раздел [Настройка Telegram-уведомлений](#настройка-telegram-уведомлений) ниже. Если не хотите настраивать сейчас — оставьте пустыми, приложение будет работать без уведомлений
-
-У каждой переменной выберите этап **«Запуск»**, отметьте **«Это секрет»** → **Применить**.
-
-### Шаг 8. Дождитесь запуска
-
-Amvera соберёт и запустит проект. Это займёт 2–5 минут. Когда статус сменится на **«Приложение запущено»**, откройте вкладку **«Логи»**. Вы должны увидеть:
-
-```
-Prisma schema loaded from prisma/schema.prisma
-Applying migration `20260225135958_init`
-All migrations have been successfully applied.
-
-▲ Next.js 15.x.x
-- Local:        http://localhost:80
-- Network:      http://0.0.0.0:80
-✓ Ready in XXXms
-```
-
-Ключевое — строка `All migrations have been successfully applied` (таблицы в базе созданы) и `✓ Ready` (приложение запущено и принимает запросы).
-
-### Шаг 9. Подключите домен
-
-Откройте вкладку **«Домены»** → **«Добавить домен»**. Появится форма:
-
-**Тип домена:**
-| Вариант | Когда выбирать |
-|---------|---------------|
-| Бесплатный домен Amvera | Для нашего случая. Вы получите адрес `имя-проекта.amvera.io` — достаточно для демо |
-| Свой домен | Если у вас куплен домен (например, `mysite.ru`). Потребуется настроить DNS у регистратора — для учебного проекта лишнее |
-
-**Тип подключения:**
-| Вариант | Что это | Подходит? |
-|---------|---------|-----------|
-| **HTTPS** | Веб-трафик с шифрованием | **Да — выбираем этот** |
-| HTTP | Веб-трафик без шифрования | Нет — браузеры помечают такие сайты как «небезопасные» |
-| MongoDB | Протокол для базы MongoDB | Нет — это не веб-приложение |
-| Redis | Протокол для кэша Redis | Нет — это не веб-приложение |
-| PostgreSQL | Протокол для базы PostgreSQL | Нет — наша база уже подключена внутри Amvera |
-
-После выбора HTTPS появятся **Дополнительные настройки** (поля «URL путь» и «Порт»). **Оставьте их пустыми** — Amvera сам определит порт из Dockerfile.
-
-Итого: **бесплатный домен Amvera** + **HTTPS** + **дополнительные настройки пустые** → **Применить**.
-
-> **Браузер показывает «Подключение не защищено»?** Это нормально — SSL-сертификат выпускается не мгновенно. Подождите 3–5 минут и обновите страницу. Если не терпится проверить прямо сейчас — нажмите «Дополнительно» → «Перейти на сайт (небезопасно)» в Chrome или «Принять риск» в Firefox. Сайт работает, просто сертификат ещё не готов.
-
-> **Почему порт 80?** Next.js по умолчанию запускается на порте 3000, но мы задаём `PORT=80` в Dockerfile. Это стандартный порт для веб-серверов, который ожидает Amvera. Снаружи вы заходите по HTTPS (порт 443) — шифрование обеспечивает Amvera, а внутрь контейнера трафик приходит уже расшифрованным на порт 80.
-
-## Настройка Telegram-уведомлений
-
-При каждой новой заявке приложение отправляет сообщение в Telegram. Для этого нужен бот и чат.
-
-### Создание бота
-
-1. Откройте Telegram и найдите [@BotFather](https://t.me/BotFather)
-2. Отправьте `/newbot`
-3. Придумайте имя бота (например, «Мой лендинг») и username (например, `my_landing_notify_bot` — должен заканчиваться на `bot`)
-4. BotFather пришлёт токен вида `7123456789:AAF1234abcd...` — это ваш `TELEGRAM_BOT_TOKEN`
-
-### Получение Chat ID
-
-Нужно узнать ID чата, куда бот будет слать уведомления:
-
-1. Добавьте бота в нужный чат (или напишите ему личное сообщение)
-2. Отправьте боту любое сообщение (например, «привет»)
-3. Откройте в браузере:
-   ```
-   https://api.telegram.org/bot<ВАШ_ТОКЕН>/getUpdates
-   ```
-   Подставьте свой токен вместо `<ВАШ_ТОКЕН>`.
-4. В ответе найдите `"chat":{"id": 123456789}` — число после `id` это ваш `TELEGRAM_CHAT_ID`
-
-> Если ответ пустой (`{"result":[]}`), отправьте боту ещё одно сообщение и обновите страницу.
+После автоматических проверок — откройте сайт в браузере, заполните форму и убедитесь, что уведомление пришло в Telegram.
 
 ## Переменные окружения
+
+```bash
+cp .env.example .env
+```
 
 | Переменная | Обязательная | Описание |
 |---|---|---|
 | `DATABASE_URL` | да | Строка подключения к PostgreSQL |
-| `WEBHOOK_SECRET` | да | Секрет для проверки входящих вебхуков (любая случайная строка) |
-| `TELEGRAM_BOT_TOKEN` | нет | Токен Telegram-бота (из BotFather). Без него уведомления не отправляются, но всё остальное работает |
+| `WEBHOOK_SECRET` | да | Секрет для входящих вебхуков |
+| `TELEGRAM_BOT_TOKEN` | нет | Токен Telegram-бота (из [@BotFather](https://t.me/BotFather)) |
 | `TELEGRAM_CHAT_ID` | нет | ID чата для уведомлений |
+
+Без Telegram-переменных приложение работает полностью — просто не шлёт уведомления.
 
 ## API
 
-### Лид-форма (Server Action)
+### Server Action: createLead
 
-Форма на сайте отправляет данные напрямую в серверную функцию — без отдельного API-запроса. Функция проверяет данные, сохраняет в базу, записывает событие `lead_created` и отправляет уведомление в Telegram.
+Форма отправляет данные через React Server Action. Валидация → сохранение в БД → событие `lead_created` → уведомление в Telegram (fire-and-forget).
 
-### POST /api/events — трекинг конверсий
+### POST /api/events
 
-Записывает события: `landing_view` (страница открыта), `cta_click` (нажата кнопка), `lead_created` (заявка отправлена).
+Трекинг конверсий: `landing_view`, `cta_click`, `lead_created`.
 
-Пример запроса (выполните в терминале):
 ```bash
 curl -X POST http://localhost:3000/api/events \
   -H "Content-Type: application/json" \
   -d '{"type":"landing_view","sessionId":"abc"}'
+# → 201
 ```
 
-> **curl** — утилита для отправки HTTP-запросов из терминала. Она уже установлена на macOS и Linux. На Windows используйте PowerShell или [установите curl](https://curl.se/download.html).
+### POST /api/webhook
 
-### POST /api/webhook — входящий вебхук
-
-Эндпоинт для внешних сервисов. Защищён секретом, повторные запросы не создают дубли.
-
-**Зачем это нужно?**
-
-Допустим, заявки с лендинга попадают в amoCRM. Менеджер обработал заявку — CRM отправляет на ваш сервер уведомление: «лид #42 переведён в "Встреча назначена"». Вы логируете событие и шлёте сообщение в Telegram.
-
-CRM может отправить тот же запрос повторно (сеть сбоила, таймаут). Без защиты событие запишется дважды. С `idempotencyKey` — повтор вернёт `{"duplicate": true}` и дубля не будет.
-
-Сейчас CRM не подключена, но эндпоинт готов — когда подключите amoCRM, Битрикс24 или другой сервис с вебхуками, всё заработает.
+Входящий эндпоинт для внешних сервисов. Защищён заголовком `x-webhook-secret`. Дубли отсекаются по `idempotencyKey` (unique constraint → P2002 → 200 с `duplicate: true`).
 
 ```bash
-# Первый запрос — событие записано (ответ 201)
+# Первый запрос → 201
 curl -X POST http://localhost:3000/api/webhook \
   -H "Content-Type: application/json" \
   -H "x-webhook-secret: your-secret" \
   -d '{"idempotencyKey":"evt-123","eventType":"payment_success","payload":{"amount":4900}}'
 
-# Тот же запрос ещё раз — дубль не создан (ответ 200)
+# Повтор с тем же ключом → 200, duplicate: true
 curl -X POST http://localhost:3000/api/webhook \
   -H "Content-Type: application/json" \
   -H "x-webhook-secret: your-secret" \
   -d '{"idempotencyKey":"evt-123","eventType":"payment_success","payload":{"amount":4900}}'
+
+# Без секрета → 401
+curl -X POST http://localhost:3000/api/webhook \
+  -H "Content-Type: application/json" \
+  -d '{"idempotencyKey":"evt-456","eventType":"test","payload":{}}'
 ```
 
-## Демо-скрипт
-
-Быстрая проверка что всё работает (занимает ~30 секунд):
+## Docker Compose (деплой на VPS)
 
 ```bash
-bash scripts/demo.sh                       # проверить localhost:3000
-bash scripts/demo.sh https://my-app.amvera.io  # проверить живой URL
+cp .env.example .env
+# заполните WEBHOOK_SECRET, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+docker compose up --build -d
 ```
 
-Скрипт проверит: страница открывается, события записываются, вебхук работает, дубли отсекаются, запрос без секрета отклоняется.
+PostgreSQL + приложение поднимаются одной командой. Volume `pgdata` сохраняет данные между перезапусками. Миграции запускаются автоматически при старте контейнера.
 
-## Частые ошибки при деплое
+## Структура проекта
 
-**`Validation Error Count: 1` / `url is no longer supported`** — версия Prisma CLI в контейнере новее, чем в проекте. В Dockerfile должно быть `RUN npm install -g prisma@6` (а не просто `prisma`, который поставит версию 7).
-
-**`sh: prisma: not found`** — Prisma CLI не установлен в контейнере. Добавьте `RUN npm install -g prisma@6` в Dockerfile перед запуском приложения.
-
-**`EACCES: permission denied 0.0.0.0:80`** — порт 80 требует прав администратора. Если в Dockerfile есть строка `USER nextjs` — удалите её.
-
-**`could not locate the Query Engine for runtime "linux-musl-openssl-3.0.x"`** — приложение собрано на одной ОС, а запускается на другой. В `prisma/schema.prisma` добавьте:
-```prisma
-binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 ```
-
-**`no such file or directory: /app/public`** — папка `public/` пустая и не попала в git. Исправление: `touch public/.gitkeep`, затем закоммитьте.
+src/
+├── app/
+│   ├── page.tsx              # лендинг (5 секций)
+│   ├── actions/lead.ts       # server action: создание лида
+│   └── api/
+│       ├── events/route.ts   # POST — трекинг конверсий
+│       └── webhook/route.ts  # POST — входящие вебхуки
+├── components/
+│   ├── sections/             # Hero, Proof, Benefits, Faq, Cta
+│   ├── ui/                   # Aceternity UI компоненты
+│   ├── LeadForm.tsx          # форма с useActionState
+│   └── FaqItem.tsx           # аккордеон
+├── types/                    # TypeScript типы (content, api, form)
+├── lib/                      # prisma, telegram, tracking
+└── content/landing.ts        # все тексты лендинга (ru)
+```
 
 ## DX
 
-- **Biome** — линтинг + форматирование (`bun run lint`, `bun run format`)
-- **lefthook** — автоматическая проверка кода перед каждым коммитом
-- **Prisma Studio** — визуальный интерфейс для базы данных (`bun run db:studio`)
+- **Biome** — `bun run lint` / `bun run format`
+- **lefthook** — pre-commit: Biome + TypeScript проверки
+- **Prisma Studio** — `bun run db:studio`
