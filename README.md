@@ -150,6 +150,19 @@ bash scripts/demo.sh              # localhost:3000
 bash scripts/demo.sh https://my.vps.com  # произвольный URL
 ```
 
+## Частые ошибки при деплое
+
+**`sh: prisma: not found`** — Prisma CLI не установлен в контейнере. В Dockerfile должна быть строка `RUN npm install -g prisma` в секции runner, до запуска приложения.
+
+**`EACCES: permission denied 0.0.0.0:80`** — контейнер запущен от непривилегированного пользователя, а порт 80 требует root. Уберите строку `USER nextjs` из Dockerfile.
+
+**`Prisma Client could not locate the Query Engine for runtime "linux-musl-openssl-3.0.x"`** — Prisma Client собран под другую ОС. В `prisma/schema.prisma` добавьте в generator:
+```prisma
+binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+```
+
+**`failed to get fileinfo for /app/public: no such file or directory`** — папка `public/` пустая и не попала в git. Создайте файл-заглушку: `touch public/.gitkeep`
+
 ## DX
 
 - **Biome** — линтинг + форматирование (`bun run lint`, `bun run format`)
