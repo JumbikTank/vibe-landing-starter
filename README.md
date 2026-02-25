@@ -52,8 +52,8 @@ bun dev                               # запустить на :3000
 # Локально
 bash scripts/demo.sh
 
-# Живой деплой (укажите свой WEBHOOK_SECRET)
-WEBHOOK_SECRET="ваш-секрет" bash scripts/demo.sh https://test2-realpepin.amvera.io
+# Живой деплой
+bash scripts/demo.sh https://test2-realpepin.amvera.io
 ```
 
 Скрипт проверяет: лендинг отдаёт 200, события записываются, вебхук без секрета отклоняется (401), с секретом записывается (201), дубль не создаётся (200).

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 BASE_URL="${1:-http://localhost:3000}"
-WEBHOOK_SECRET="${WEBHOOK_SECRET:-change-me-to-random-string}"
+WEBHOOK_SECRET="${WEBHOOK_SECRET:-demo-secret-2026}"
 PASS=0
 FAIL=0
 
