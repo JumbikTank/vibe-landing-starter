@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  name      String   @db.VarChar(200)
+  contact   String   @db.VarChar(300)
+  consent   Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("leads")
+}
+
+enum EventType {
+  landing_view
+  cta_click
+  lead_created
+}
+
+model ConversionEvent {
+  id        String    @id @default(cuid())
+  type      EventType
+  sessionId String?   @map("session_id")
+  payload   Json?
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([type])
+  @@index([createdAt])
+  @@map("conversion_events")
+}
+
+model WebhookEvent {
+  id             String   @id @default(cuid())
+  idempotencyKey String   @unique @map("idempotency_key")
+  eventType      String   @map("event_type")
+  payload        Json
+  receivedAt     DateTime @default(now()) @map("received_at")
+
+  @@map("webhook_events")
+}
