@@ -27,10 +27,10 @@ export function TextGenerateEffect({
 				<motion.span
 					// biome-ignore lint/suspicious/noArrayIndexKey: words can repeat, index needed for uniqueness
 					key={`${word}-${idx}`}
-					className="inline-block opacity-0"
+					className="mr-[0.25em] inline-block opacity-0"
 					style={{ filter: "blur(8px)" }}
 				>
-					{word}{" "}
+					{word}
 				</motion.span>
 			))}
 		</div>

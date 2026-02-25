@@ -49,6 +49,39 @@ docker compose up --build -d
 bash scripts/demo.sh
 ```
 
+### Деплой на Amvera Cloud
+
+1. Зарегистрируйтесь на [amvera.ru](https://amvera.ru)
+2. Создайте **PostgreSQL** в разделе «Управляемые сервисы» (тариф «Начальный»). Запомните имя базы, пользователя и пароль
+3. Создайте **проект** (тип: приложение, тариф «Начальный»)
+4. На шаге «Загрузка данных» выберите «Через git». Откройте терминал в папке проекта — в VS Code это Terminal → New Terminal, или откройте терминал отдельно и перейдите в папку командой `cd`. Вы в правильном месте, если путь заканчивается на название проекта:
+   ```
+   user@pc:~/vibe-landing-starter$
+   ```
+   Если в проекте ещё нет git — инициализируйте:
+   ```bash
+   touch public/.gitkeep   # git не трекает пустые папки, а Docker-сборке нужна public/
+   git init && git add -A && git commit -m "init"
+   ```
+   Затем скопируйте команду из интерфейса Amvera и выполните:
+   ```bash
+   git remote add amvera <URL из интерфейса Amvera>
+   git push amvera master
+   ```
+   > Важно: пишите именно `git push amvera master`, а не просто `git push` — нужно явно указать, куда отправляем код.
+   >
+   > Терминал спросит логин и пароль — введите ваши данные от аккаунта Amvera.
+5. На шаге «Конфигурация» — пропустите, Amvera подхватит `Dockerfile` автоматически
+6. В настройках проекта откройте **Переменные**. Проще всего: создайте файл `.env` с содержимым ниже и нажмите «Подгрузить .env»:
+   ```
+   DATABASE_URL=postgresql://USER:PASSWORD@amvera-ЛОГИН-cnpg-ИМЯБД-rw:5432/ИМЯБД?schema=public
+   WEBHOOK_SECRET=вставьте-случайную-строку-из-randomorg
+   TELEGRAM_BOT_TOKEN=токен-из-BotFather
+   TELEGRAM_CHAT_ID=ваш-chat-id
+   ```
+   Для `WEBHOOK_SECRET` сгенерируйте случайную строку на [1password.com/password-generator](https://1password.com/password-generator/). Подставьте реальные значения: `USER`, `PASSWORD`, `ЛОГИН`, `ИМЯБД` — из шага 2, когда создавали PostgreSQL. У каждой переменной выберите этап **«Запуск»**, отметьте **«Это секрет»** и нажмите **Применить**
+7. Amvera соберёт и задеплоит проект. Живой URL появится в панели проекта
+
 ## Переменные окружения
 
 | Переменная | Обязательная | Описание |
@@ -73,13 +106,28 @@ curl -X POST http://localhost:3000/api/events \
 ```
 
 ### POST /api/webhook
-Входящие вебхуки с идемпотентностью.
+Входящий эндпоинт для внешних сервисов. Защищён секретом, дубли отсекаются по `idempotencyKey`.
+
+**Зачем это нужно на практике?**
+
+Допустим, заявки с лендинга попадают в amoCRM. Менеджер обработал заявку, назначил встречу — amoCRM отправляет на ваш сервер POST-запрос: «лид #42 переведён в "Встреча назначена"». Вы логируете событие и шлёте уведомление в Telegram.
+
+Почему важна идемпотентность: CRM может отправить тот же запрос повторно (сеть глюкнула, таймаут). Без `idempotencyKey` событие запишется дважды. С ним — повторный запрос вернёт `{ "duplicate": true }` и дубля не будет.
+
+Сейчас к лендингу не подключена CRM, но эндпоинт готов — когда подключите amoCRM, Битрикс или любой другой сервис с вебхуками, всё заработает.
 
 ```bash
+# Первый запрос — событие записано (201)
 curl -X POST http://localhost:3000/api/webhook \
   -H "Content-Type: application/json" \
   -H "x-webhook-secret: your-secret" \
-  -d '{"idempotencyKey":"unique-key","eventType":"order","payload":{}}'
+  -d '{"idempotencyKey":"payment-abc123","eventType":"payment_success","payload":{"amount":4900}}'
+
+# Повторный запрос с тем же ключом — дубль не создан (200)
+curl -X POST http://localhost:3000/api/webhook \
+  -H "Content-Type: application/json" \
+  -H "x-webhook-secret: your-secret" \
+  -d '{"idempotencyKey":"payment-abc123","eventType":"payment_success","payload":{"amount":4900}}'
 ```
 
 ## Демо-скрипт

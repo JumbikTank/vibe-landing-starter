@@ -68,16 +68,26 @@ export function Vortex({
 			animationId = requestAnimationFrame(draw);
 		}
 
-		resize();
-		initParticles();
-		draw();
+		// Ждём, пока canvas получит реальные размеры после layout
+		const startAnimation = () => {
+			resize();
+			if (canvas.width === 0 || canvas.height === 0) return;
+			initParticles();
+			draw();
+		};
 
-		window.addEventListener("resize", () => {
+		startAnimation();
+
+		const onResize = () => {
 			resize();
 			initParticles();
-		});
+		};
+		window.addEventListener("resize", onResize);
 
-		return () => cancelAnimationFrame(animationId);
+		return () => {
+			cancelAnimationFrame(animationId);
+			window.removeEventListener("resize", onResize);
+		};
 	}, []);
 
 	return (

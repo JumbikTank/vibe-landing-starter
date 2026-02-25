@@ -28,7 +28,7 @@ COPY --from=deps /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
 
 USER nextjs
-EXPOSE 3000
-ENV PORT=3000 HOSTNAME="0.0.0.0"
+EXPOSE 80
+ENV PORT=80 HOSTNAME="0.0.0.0"
 
 CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]

@@ -29,7 +29,7 @@ export function InfiniteMovingCards({
 			const directionValue = direction === "left" ? "forwards" : "reverse";
 			containerRef.current.style.setProperty("--animation-direction", directionValue);
 
-			const speedValue = speed === "fast" ? "20s" : speed === "normal" ? "40s" : "80s";
+			const speedValue = speed === "fast" ? "20s" : speed === "normal" ? "40s" : "60s";
 			containerRef.current.style.setProperty("--animation-duration", speedValue);
 
 			setStart(true);

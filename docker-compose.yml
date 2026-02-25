@@ -20,7 +20,7 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3000:80"
     environment:
       DATABASE_URL: "postgresql://postgres:postgres@db:5432/vibe_landing?schema=public"
       WEBHOOK_SECRET: "${WEBHOOK_SECRET:-change-me-to-random-string}"
