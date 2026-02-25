@@ -3,6 +3,7 @@ set -euo pipefail
 
 BASE_URL="${1:-http://localhost:3000}"
 WEBHOOK_SECRET="${WEBHOOK_SECRET:-demo-secret-2026}"
+DEMO_KEY="demo-$(date +%s)"
 PASS=0
 FAIL=0
 
@@ -40,7 +41,7 @@ check "POST /api/events returns 201" "201" "$STATUS"
 STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   -X POST "$BASE_URL/api/webhook" \
   -H "Content-Type: application/json" \
-  -d '{"idempotencyKey":"demo-1","eventType":"test","payload":{}}')
+  -d '{"idempotencyKey":"'"$DEMO_KEY"'","eventType":"test","payload":{}}')
 check "POST /api/webhook without secret returns 401" "401" "$STATUS"
 
 # 4. POST /api/webhook с секретом — 201
@@ -48,7 +49,7 @@ STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   -X POST "$BASE_URL/api/webhook" \
   -H "Content-Type: application/json" \
   -H "x-webhook-secret: $WEBHOOK_SECRET" \
-  -d '{"idempotencyKey":"demo-1","eventType":"test","payload":{"source":"demo"}}')
+  -d '{"idempotencyKey":"'"$DEMO_KEY"'","eventType":"test","payload":{"source":"demo"}}')
 check "POST /api/webhook with secret returns 201" "201" "$STATUS"
 
 # 5. Повторный вебхук с тем же ключом — 200 (duplicate)
@@ -56,7 +57,7 @@ STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   -X POST "$BASE_URL/api/webhook" \
   -H "Content-Type: application/json" \
   -H "x-webhook-secret: $WEBHOOK_SECRET" \
-  -d '{"idempotencyKey":"demo-1","eventType":"test","payload":{"source":"demo"}}')
+  -d '{"idempotencyKey":"'"$DEMO_KEY"'","eventType":"test","payload":{"source":"demo"}}')
 check "POST /api/webhook duplicate returns 200" "200" "$STATUS"
 
 echo ""
