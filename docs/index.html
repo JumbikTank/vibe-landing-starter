@@ -7,7 +7,22 @@
 <style>
 :root { --ya-yellow: #FFDE40; --ya-black: #1A1A1A; --ya-gray: #F7F7F7; --ya-border: #E5E5E5; --ya-green: #4CAF50; }
 * { box-sizing: border-box; }
-body { font-family: -apple-system,'Segoe UI','Roboto','Helvetica Neue',sans-serif; font-size: 15px; line-height: 1.6; color: var(--ya-black); max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; background: #FFF; }
+body { font-family: -apple-system,'Segoe UI','Roboto','Helvetica Neue',sans-serif; font-size: 15px; line-height: 1.6; color: var(--ya-black); max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; background: #FFF; scroll-behavior: smooth; }
+
+/* TOC inline */
+.toc { background: var(--ya-gray); border: 1px solid var(--ya-border); border-radius: 8px; padding: 16px 20px; margin: 16px 0 24px; }
+.toc-title { font-weight: 700; font-size: 14px; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; }
+.toc ol { margin: 0; padding-left: 22px; }
+.toc li { margin: 4px 0; }
+.toc a { color: var(--ya-black); text-decoration: none; font-size: 14px; font-weight: 500; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+.toc a:hover { border-bottom-color: var(--ya-yellow); }
+
+/* Sidebar nav */
+.side-nav { position: fixed; top: 50%; transform: translateY(-50%); left: max(8px, calc((100vw - 760px) / 2 - 200px)); width: 180px; font-size: 12px; line-height: 1.4; display: none; }
+.side-nav a { display: block; padding: 4px 10px; color: #999; text-decoration: none; border-left: 2px solid transparent; transition: all 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.side-nav a:hover { color: var(--ya-black); }
+.side-nav a.active { color: var(--ya-black); border-left-color: var(--ya-yellow); font-weight: 600; }
+@media (min-width: 1200px) { .side-nav { display: block; } }
 
 /* Headers */
 h1 { font-size: 28px; font-weight: 800; margin: 0 0 4px; }
@@ -223,13 +238,18 @@ hr.q-sep { border-top-color: #333; }
 .wh-legend { background: var(--ya-gray); border-top-color: var(--ya-border); color: #AAA; }
 .wh-response { background: var(--ya-gray); border-top-color: var(--ya-border); }
 .tg-msg { background: #1A2940; box-shadow: 0 1px 3px rgba(0,0,0,.5); }
+.toc { background: var(--ya-gray); border-color: var(--ya-border); }
+.toc a { color: var(--ya-black); }
+.toc-title { color: #777; }
+.side-nav a { color: #666; }
+.side-nav a:hover, .side-nav a.active { color: var(--ya-black); }
 }
 </style>
 </head>
 <body>
 <h1>УРОК: ОТ ПРОМПТА ДО РАБОЧЕГО ЛЕНДИНГА</h1>
 <p class="subtitle">Проект: Vibe Landing Starter</p>
-<h2>ПОДГОТОВКА К УРОКУ</h2>
+<h2 id="prep">ПОДГОТОВКА К УРОКУ</h2>
 <hr>
 <h3>Что вам понадобится</h3>
 <p>В этом уроке вы будете работать с ИИ-ассистентом в режиме диалога: описывать задачу текстом, получать код, проверять результат. Код писать руками не нужно — но нужно уметь запускать команды в терминале и общаться с ИИ.</p>
@@ -248,18 +268,20 @@ hr.q-sep { border-top-color: #333; }
 Если чего-то нет — установи. Я на [Windows / macOS / Linux].
 После установки покажи версии всех четырёх инструментов.</pre></div>
 <p>Замените [Windows / macOS / Linux] на вашу операционную систему. Агент сам определит, чего не хватает, и установит.</p></div></div>
-<h2>ВВЕДЕНИЕ</h2>
+<h2 id="intro">ВВЕДЕНИЕ</h2>
 <p>В этом уроке вы разберёте, как устроен лендинг для сбора заявок — от первого экрана до деплоя на сервер. Ваша задача — понимать архитектуру, правильно формулировать запросы и проверять результат.</p>
 <p>Проект называется Vibe Landing Starter: одностраничный сайт, который собирает контакты потенциальных клиентов (лидов), сохраняет их в базу данных, а когда приходит новая заявка — присылает вам уведомление в Telegram, чтобы вы сразу могли связаться с клиентом.</p>
-<h3>Что вы будете понимать после урока:</h3>
+<div class="toc">
+<p class="toc-title">Содержание урока</p>
 <ol>
-<li>Из каких секций собирать лендинг и зачем нужна каждая</li>
-<li>Какие данные собирать с формы заявки и как хранить их в базе</li>
-<li>Как отслеживать, что делают посетители на странице</li>
-<li>Как принимать данные от внешних сервисов и не обрабатывать одну заявку дважды</li>
-<li>Как получать уведомления о новых заявках в Telegram</li>
-<li>Как опубликовать сайт в интернете и настроить его</li>
+<li><a href="#part1">Структура лендинга</a> — из каких секций собирать и зачем</li>
+<li><a href="#part2">Лид-форма и данные</a> — что собирать и как хранить в базе</li>
+<li><a href="#part3">Событийность и аудит</a> — как отслеживать действия посетителей</li>
+<li><a href="#part4">Webhook и безопасность</a> — как принимать данные и не дублировать</li>
+<li><a href="#part5">Telegram-уведомления</a> — как получать заявки мгновенно</li>
+<li><a href="#part6">Деплой и инфраструктура</a> — как опубликовать и настроить</li>
 </ol>
+</div>
 <p>Стек проекта: Next.js, TypeScript, Tailwind CSS, Prisma + PostgreSQL. Названия технологий знать не обязательно — ИИ подберёт и настроит их сам. Вам важно понимать, зачем каждая часть нужна и как они связаны.</p>
 <hr>
 <h3>Как настроить проверяющего: готовый промпт</h3>
@@ -288,7 +310,7 @@ hr.q-sep { border-top-color: #333; }
   <div class="wf-step"><span class="wf-num">8</span><span class="wf-from chat2">ИИ-проверяющий</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">&laquo;ок&raquo;</span></div>
 </div>
 <p>Вы — посередине. ИИ-кодер генерирует, ИИ-проверяющий ломает, вы принимаете решение.</p>
-<h2>ЧАСТЬ 1. СТРУКТУРА ЛЕНДИНГА</h2>
+<h2 id="part1">ЧАСТЬ 1. СТРУКТУРА ЛЕНДИНГА</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как собирать лендинг из 5 обязательных секций (Hero / Proof / Benefits / FAQ / CTA) с логичной навигацией и читаемой иерархией.</div>
 <hr>
 <h3>Зачем именно 5 секций</h3>
@@ -331,7 +353,7 @@ hr.q-sep { border-top-color: #333; }
 <li><strong>Захардкодить текст прямо в компоненты. Напомните</strong>: «Контент вынеси отдельно, я хочу менять текст в одном месте».</li>
 <li><strong>Забыть навигацию</strong>: кнопка в Hero есть, но никуда не ведёт.</li>
 </ul>
-<h2>ЧАСТЬ 2. ЛИД-ФОРМА И РАБОТА С ДАННЫМИ</h2>
+<h2 id="part2">ЧАСТЬ 2. ЛИД-ФОРМА И РАБОТА С ДАННЫМИ</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как проектировать модель данных лида в Postgres (поля, ограничения, уникальность).</div>
 <hr>
 <h3>Что такое лид</h3>
@@ -399,7 +421,7 @@ hr.q-sep { border-top-color: #333; }
 <p>Откройте отдельный чат (ИИ-проверяющий). Покажите ему модель данных и серверную функцию сохранения лида. Задайте вопрос:</p>
 <div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p5">Копировать</button></div><pre class="prompt-body" id="p5">Я отправляю POST-запрос напрямую через curl, минуя браузер. Поле name — пустая строка, consent — false. Пройдёт ли запись в базу? Покажи путь выполнения по шагам.</pre></div>
 <p>Правильный ответ: сервер отклонит запрос ещё до обращения к базе. Если ИИ-проверяющий говорит, что запись пройдёт — валидация только на клиенте, а на сервере её нет. Попросите ИИ-кодера добавить серверную проверку.</p>
-<h2>ЧАСТЬ 3. СОБЫТИЙНОСТЬ И АУДИТ</h2>
+<h2 id="part3">ЧАСТЬ 3. СОБЫТИЙНОСТЬ И АУДИТ</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как инструментировать продукт событиями конверсии (landing_view, cta_click, lead_created) и писать их в БД.</div>
 <hr>
 <h3>Зачем отслеживать события</h3>
@@ -453,7 +475,7 @@ hr.q-sep { border-top-color: #333; }
 <p>Покажите проверяющему код трекинга и спросите:</p>
 <div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p7">Копировать</button></div><pre class="prompt-body" id="p7">Сервер /api/events лежит и возвращает 500. Пользователь открывает лендинг и кликает CTA. Что он увидит? Будет ли страница работать?</pre></div>
 <p>Правильный ответ: страница работает как обычно, пользователь ничего не замечает. Если ИИ-проверяющий говорит «пользователь увидит ошибку» или «страница зависнет» — ошибки трекинга не обрабатываются. Попросите ИИ-кодера обернуть вызовы в try/catch с пустым блоком.</p>
-<h2>ЧАСТЬ 4. WEBHOOK INBOX + БЕЗОПАСНОСТЬ + ИДЕМПОТЕНТНОСТЬ</h2>
+<h2 id="part4">ЧАСТЬ 4. WEBHOOK + БЕЗОПАСНОСТЬ + ИДЕМПОТЕНТНОСТЬ</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как обрабатывать входящие события и логировать их в event log с сохранением полезного payload.</div>
 <hr>
 <h3>Зачем нужен webhook</h3>
@@ -537,7 +559,7 @@ hr.q-sep { border-top-color: #333; }
 <p>Правильный ответ: второй запрос — 200 OK, записей — одна. Если ИИ-проверяющий говорит «500» или «две записи» — защита не работает.</p></div></div>
 <div class="rich-item"><div class="rich-num">3</div><div class="rich-body"><strong>Безопасность:</strong><p>«Ты — аудитор безопасности. Какие способы обойти проверку секрета ты видишь в этом коде?»</p>
 <p>Хороший код не даёт способов обхода. Если ИИ-проверяющий находит лазейки — покажите его ответ ИИ-кодеру и попросите исправить.</p></div></div>
-<h2>ЧАСТЬ 5. ИНТЕГРАЦИИ: TELEGRAM-УВЕДОМЛЕНИЯ</h2>
+<h2 id="part5">ЧАСТЬ 5. TELEGRAM-УВЕДОМЛЕНИЯ</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как интегрировать отправку уведомления в Telegram при lead_created, с минимальной, но полезной структурой сообщения.</div>
 <hr>
 <h3>Зачем уведомлять в Telegram</h3>
@@ -602,7 +624,7 @@ hr.q-sep { border-top-color: #333; }
 <h3>Ещё один вопрос:</h3>
 <div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p11">Копировать</button></div><pre class="prompt-body" id="p11">TELEGRAM_BOT_TOKEN не задан в переменных окружения. Что произойдёт при создании лида? Приложение упадёт, покажет ошибку или проигнорирует?</pre></div>
 <p>Правильный ответ: проигнорирует. Если ИИ-проверяющий говорит «ошибка» — нет проверки наличия токена.</p>
-<h2>ЧАСТЬ 6. ДЕПЛОЙ И ИНФРАСТРУКТУРА</h2>
+<h2 id="part6">ЧАСТЬ 6. ДЕПЛОЙ И ИНФРАСТРУКТУРА</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как деплоить приложение и предоставлять живой URL; конфигурировать переменные окружения (DB_URL, TG_TOKEN, WEBHOOK_SECRET и т.д.).</div>
 <hr>
 <h3>Переменные окружения</h3>
@@ -715,7 +737,7 @@ TELEGRAM_CHAT_ID=id-чата</code></pre>
 <tr><td>no such file: /app/public</td><td>git не трекает пустые папки</td><td>touch public/.gitkeep &amp;&amp; git add .</td></tr>
 </tbody></table>
 <p>В каждом случае решение одно: опишите ИИ-кодеру ошибку, и он поправит. Но полезно узнавать эти ошибки в лицо — вы сэкономите время на диагностику.</p>
-<h2>ПРОВЕРОЧНЫЕ ЗАДАНИЯ</h2>
+<h2 id="quiz">ПРОВЕРОЧНЫЕ ЗАДАНИЯ</h2>
 <hr>
 <h3>Тесты с одним правильным ответом</h3>
 <div class="question">
@@ -885,7 +907,7 @@ TELEGRAM_BOT_TOKEN</pre>
 Отображение формы          Отправка уведомления в Telegram</pre>
 <p>Трекинг landing_view и cta_click инициируется в браузере. Форма рисуется в браузере. А сохранение лида, проверка webhook и Telegram — серверные операции с доступом к базе и внешним API.</p>
 </div></details></div>
-<h2>ИТОГИ</h2>
+<h2 id="summary">ИТОГИ</h2>
 <hr>
 <h3>Что вы разобрали</h3>
 <ol>
@@ -919,7 +941,38 @@ TELEGRAM_BOT_TOKEN</pre>
 <hr>
 <h3>Зачем это всё</h3>
 <p>Graceful degradation — не техническая мелочь. Это принцип, который отличает рабочий продукт от хрупкой поделки. ИИ умеет генерировать код, который «работает на демо». Но код, который работает когда что-то идёт не так — это уже ваша ответственность. Именно для этого нужны ИИ-проверяющий, чек-листы и конкретные вопросы из этого урока.</p>
+<nav class="side-nav" id="sidenav">
+<a href="#part1">1. Структура</a>
+<a href="#part2">2. Лид-форма</a>
+<a href="#part3">3. События</a>
+<a href="#part4">4. Webhook</a>
+<a href="#part5">5. Telegram</a>
+<a href="#part6">6. Деплой</a>
+<a href="#quiz">Задания</a>
+<a href="#summary">Итоги</a>
+</nav>
 <script>
+/* Sidebar: highlight current section */
+(function() {
+    var nav = document.getElementById('sidenav');
+    if (!nav) return;
+    var links = nav.querySelectorAll('a');
+    var ids = [];
+    links.forEach(function(a) { ids.push(a.getAttribute('href').slice(1)); });
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) return;
+            links.forEach(function(a) { a.classList.remove('active'); });
+            var match = nav.querySelector('a[href="#' + entry.target.id + '"]');
+            if (match) match.classList.add('active');
+        });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    ids.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) observer.observe(el);
+    });
+})();
+
 document.addEventListener('click', function(e) {
     if (!e.target.classList.contains('copy-btn')) return;
     var el = document.getElementById(e.target.dataset.target);
