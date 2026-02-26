@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>От промпта до рабочего лендинга — Vibe Landing Starter</title>
+<style>
+:root { --ya-yellow: #FFDE40; --ya-black: #1A1A1A; --ya-gray: #F7F7F7; --ya-border: #E5E5E5; --ya-green: #4CAF50; }
+* { box-sizing: border-box; }
+body { font-family: -apple-system,'Segoe UI','Roboto','Helvetica Neue',sans-serif; font-size: 15px; line-height: 1.6; color: var(--ya-black); max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; background: #FFF; }
+
+/* Headers */
+h1 { font-size: 28px; font-weight: 800; margin: 0 0 4px; }
+h2 { font-size: 22px; font-weight: 700; background: var(--ya-yellow); padding: 12px 18px; border-radius: 8px; margin: 40px 0 12px; }
+h3 { font-size: 17px; font-weight: 600; margin: 28px 0 8px; }
+
+.subtitle { font-size: 16px; color: #666; margin: 0 0 32px; }
+.edu-result { font-size: 13.5px; color: #555; font-style: italic; padding: 8px 16px; background: var(--ya-gray); border-left: 3px solid var(--ya-yellow); border-radius: 0 6px 6px 0; margin: 0 0 16px; }
+
+/* Separators */
+hr { border: none; border-top: 1px solid var(--ya-border); margin: 24px 0; }
+
+/* Basic content */
+p { margin: 8px 0; }
+ul, ol { margin: 8px 0; padding-left: 24px; }
+li { margin: 4px 0; }
+blockquote { background: var(--ya-gray); border-left: 3px solid var(--ya-yellow); padding: 12px 16px; margin: 12px 0; font-style: italic; font-size: 14px; color: #333; }
+
+/* Code */
+code { background: rgba(0,0,0,.06); padding: 1px 4px; border-radius: 3px; font-family: 'JetBrains Mono','Fira Code','Consolas',monospace; font-size: 13px; }
+pre { font-family: 'JetBrains Mono','Fira Code','Consolas',monospace; font-size: 12px; line-height: 1.4; background: var(--ya-gray); border: 1px solid var(--ya-border); border-radius: 6px; padding: 12px 16px; margin: 12px 0; overflow-x: auto; white-space: pre; }
+pre code { background: none; padding: 0; font-size: inherit; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 14px 0; }
+th { background: var(--ya-black); color: #FFF; padding: 10px 12px; text-align: left; font-weight: 600; }
+th:first-child { border-radius: 6px 0 0 0; }
+th:last-child { border-radius: 0 6px 0 0; }
+td { padding: 8px 12px; border-bottom: 1px solid var(--ya-border); }
+tr:nth-child(even) td { background: #FAFAFA; }
+
+/* Checklist */
+.checklist { list-style: none; padding-left: 0; }
+.checklist li { padding: 4px 0 4px 30px; position: relative; }
+.checklist li::before { content: '\2610'; position: absolute; left: 6px; color: var(--ya-yellow); font-size: 17px; font-weight: bold; }
+
+/* Prompt boxes */
+.prompt-box { background: #FFF8E1; border: 2px solid var(--ya-yellow); border-radius: 8px; padding: 16px; margin: 16px 0; }
+.prompt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.prompt-title { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.prompt-body { font-family: 'JetBrains Mono','Fira Code','Consolas',monospace; font-size: 13px; line-height: 1.5; white-space: pre-wrap; margin: 0; color: #333; }
+
+/* Inline prompts with copy */
+.inline-prompt-wrap { position: relative; margin: 12px 0; }
+.inline-prompt { background: var(--ya-gray); border-left: 3px solid var(--ya-yellow); padding: 12px 16px; margin: 0; font-style: italic; font-size: 14px; color: #333; }
+
+/* Copy button */
+.copy-btn { background: var(--ya-black); color: #FFF; border: none; padding: 6px 14px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+.copy-btn:hover { background: #444; }
+.copy-btn:active { background: var(--ya-yellow); color: var(--ya-black); }
+.copy-btn.small { margin-top: 6px; display: inline-block; }
+.copy-btn.copied { background: var(--ya-green); }
+
+/* Info box */
+.info-box { background: var(--ya-gray); border: 1px solid var(--ya-border); border-radius: 8px; padding: 14px 16px; margin: 14px 0; }
+.info-box pre { margin: 0; font-family: 'Consolas',monospace; font-size: 13px; white-space: pre-wrap; background: transparent; border: none; padding: 0; }
+
+/* Quiz questions */
+.question { background: #FAFAFA; border: 1px solid var(--ya-border); border-radius: 8px; padding: 16px; margin: 14px 0; }
+.q-text { margin: 0 0 8px; }
+.opt { margin: 3px 0 3px 16px; font-size: 14px; }
+.answer-toggle { margin-top: 12px; border-top: 1px solid var(--ya-border); padding-top: 8px; }
+.answer-toggle summary { cursor: pointer; color: var(--ya-green); font-weight: 600; font-size: 14px; user-select: none; padding: 4px 0; }
+.answer-toggle summary:hover { text-decoration: underline; }
+.answer-content { margin-top: 8px; padding: 10px 14px; background: #F0FFF0; border-left: 3px solid var(--ya-green); border-radius: 0 6px 6px 0; font-size: 13.5px; }
+.q-pre { font-family: 'Consolas',monospace; font-size: 13px; line-height: 1.4; background: #f5f5f5; padding: 8px 12px; border-radius: 4px; margin: 6px 0; white-space: pre; border: none; }
+.answer-pre { font-family: 'Consolas',monospace; font-size: 12px; line-height: 1.4; background: #E8F5E9; padding: 8px 12px; border-radius: 4px; margin: 6px 0; white-space: pre; border: none; }
+hr.q-sep { border: none; border-top: 1px dashed #DDD; margin: 16px 0; }
+
+/* Rich numbered items */
+.rich-item { display: flex; gap: 14px; margin: 16px 0; }
+.rich-num { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--ya-yellow); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; margin-top: 2px; }
+.rich-body { flex: 1; min-width: 0; }
+.rich-body strong { display: block; margin-bottom: 6px; font-size: 16px; }
+.rich-body p { margin: 4px 0; }
+
+/* Workflow diagram — step-by-step */
+.wf-diagram { margin: 16px 0; border: 1px solid var(--ya-border); border-radius: 8px; overflow: hidden; font-size: 13px; }
+.wf-step { display: flex; align-items: center; padding: 6px 16px; border-bottom: 1px solid var(--ya-border); gap: 10px; }
+.wf-step:last-child { border-bottom: none; }
+.wf-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--ya-border); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; }
+.wf-from { flex-shrink: 0; width: 110px; font-weight: 600; }
+.wf-arrow { color: #888; flex-shrink: 0; }
+.wf-to { flex-shrink: 0; width: 110px; font-weight: 600; }
+.wf-what { flex: 1; color: #555; font-style: italic; }
+.wf-from.you, .wf-to.you { color: var(--ya-black); background: var(--ya-yellow); padding: 2px 8px; border-radius: 4px; text-align: center; }
+.wf-from.chat1, .wf-to.chat1 { color: #1976D2; }
+.wf-from.chat2, .wf-to.chat2 { color: #388E3C; }
+
+/* Funnel */
+.funnel { margin: 16px 0; }
+.funnel-row { display: flex; align-items: baseline; gap: 12px; padding: 10px 16px; border-left: 4px solid var(--clr); background: color-mix(in srgb, var(--clr) 15%, white); margin-bottom: 2px; border-radius: 0 6px 6px 0; }
+.funnel-name { font-weight: 800; font-size: 14px; min-width: 80px; }
+.funnel-desc { font-weight: 600; font-size: 13px; color: #333; }
+.funnel-sub { font-size: 12px; color: #666; }
+
+/* Pipe diagram (dataflow) */
+.pipe-diagram { margin: 16px 0; text-align: center; }
+.pipe-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.pipe-row.small { margin-top: 4px; }
+.pipe-box { background: var(--ya-gray); border: 1px solid var(--ya-border); border-radius: 8px; padding: 10px 16px; font-weight: 600; font-size: 14px; text-align: center; }
+.pipe-box small { display: block; font-weight: 400; font-size: 11px; color: #666; }
+.pipe-box.accent { background: #E3F2FD; border-color: #90CAF9; }
+.pipe-box.tg { background: #E1F5FE; border-color: #4FC3F7; }
+.pipe-arrow { font-size: 13px; color: #666; white-space: nowrap; }
+.pipe-branch { font-size: 13px; color: #666; margin: 6px 0; }
+
+/* Events diagram — step-by-step */
+.ev-diagram { margin: 16px 0; border: 1px solid var(--ya-border); border-radius: 8px; overflow: hidden; font-size: 13px; }
+.ev-step { display: flex; align-items: center; padding: 8px 16px; border-bottom: 1px solid var(--ya-border); gap: 10px; }
+.ev-step:last-child { border-bottom: none; }
+.ev-step.auto { background: #FFF8E1; }
+.ev-action { flex-shrink: 0; width: 180px; font-style: italic; color: #555; }
+.ev-event { flex-shrink: 0; padding: 3px 10px; border-radius: 4px; font-family: monospace; font-size: 12px; font-weight: 600; }
+.ev-event.browser { background: #E3F2FD; color: #1565C0; }
+.ev-event.server { background: #E8F5E9; color: #2E7D32; }
+.ev-where { color: #888; font-size: 12px; }
+.ev-arrow { color: #888; }
+
+/* Compare box (polling vs webhook) */
+.compare-box { margin: 16px 0; border-radius: 8px; overflow: hidden; }
+.compare-row { padding: 10px 16px; font-size: 13.5px; }
+.compare-row.bad { background: #FFEBEE; border-left: 4px solid #E53935; }
+.compare-row.good { background: #E8F5E9; border-left: 4px solid #43A047; }
+.compare-row em { color: #666; }
+
+/* Webhook diagram */
+.webhook-diagram { margin: 16px 0; border: 1px solid var(--ya-border); border-radius: 8px; overflow: hidden; }
+.wh-incoming { background: #FFF8E1; padding: 14px 16px; border-bottom: 1px solid var(--ya-border); }
+.wh-incoming-title { font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+.wh-incoming code { background: rgba(0,0,0,.06); padding: 1px 4px; border-radius: 3px; font-size: 11px; }
+.wh-steps { padding: 0; margin: 0; list-style: none; }
+.wh-step { display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--ya-border); font-size: 13px; gap: 8px; }
+.wh-step:last-child { border-bottom: none; }
+.wh-step-num { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--ya-border); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; }
+.wh-step-check { flex: 1; }
+.wh-step-pass { color: #888; font-size: 12px; }
+.wh-step-fail { font-weight: 600; font-size: 12px; white-space: nowrap; }
+.wh-step-fail.red { color: #E53935; }
+.wh-step-fail.amber { color: #F57F17; }
+.wh-step-fail.green { color: #2E7D32; }
+.wh-step.ok { background: #E8F5E9; }
+.wh-step.ok .wh-step-num { background: #4CAF50; color: #fff; }
+.wh-legend { padding: 10px 16px; background: var(--ya-gray); border-top: 1px solid var(--ya-border); font-size: 12px; line-height: 1.6; color: #555; }
+.wh-ok { color: #2E7D32; font-weight: 600; }
+.wh-response { text-align: center; padding: 8px; background: var(--ya-gray); font-size: 12px; font-family: monospace; border-top: 1px solid var(--ya-border); }
+
+/* Telegram message */
+.tg-msg { margin: 16px auto; max-width: 300px; background: #E3F2FD; border-radius: 12px 12px 12px 0; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.tg-msg-title { font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+.tg-msg-body { font-size: 13px; line-height: 1.5; }
+
+/* Responsive */
+@media print { body { max-width: 100%; padding: 0; } .copy-btn { display: none; } details summary { display: none; } .answer-content { display: block !important; } }
+@media (max-width: 600px) { body { padding: 16px 12px 60px; font-size: 14px; } h2 { font-size: 19px; padding: 10px 14px; } pre { font-size: 10px !important; } }
+</style>
+</head>
+<body>
+<h1>УРОК: ОТ ПРОМПТА ДО РАБОЧЕГО ЛЕНДИНГА</h1>
+<p class="subtitle">Проект: Vibe Landing Starter</p>
+<h2>ПОДГОТОВКА К УРОКУ</h2>
+<hr>
+<h3>Что вам понадобится</h3>
+<p>В этом уроке вы будете работать с ИИ-ассистентом в режиме диалога: описывать задачу текстом, получать код, проверять результат. Код писать руками не нужно — но нужно уметь запускать команды в терминале и общаться с ИИ.</p>
+<p>Перед началом убедитесь, что у вас есть:</p>
+<div class="rich-item"><div class="rich-num">1</div><div class="rich-body"><strong>ИИ-агент</strong><p>Вам нужен ИИ, который умеет создавать и редактировать файлы в проекте. Вы описываете задачу словами — он пишет код.</p>
+<table><thead><tr><th>Инструмент</th><th>Бесплатно</th><th>VPN</th><th>Где взять</th></tr></thead><tbody><tr><td>Antigravity</td><td>Щедрая квота</td><td>Да</td><td>antigravity.ai</td></tr><tr><td>Cursor</td><td>Есть бесплатный</td><td>Да</td><td>cursor.com</td></tr><tr><td>Windsurf</td><td>Есть бесплатный</td><td>Да</td><td>windsurf.com</td></tr><tr><td>Claude Code</td><td>С подпиской</td><td>Да</td><td>claude.ai</td></tr><tr><td>Perplexity</td><td>Бесплатный</td><td>Нет</td><td>perplexity.ai</td></tr></tbody></table>
+<p>Все инструменты, кроме Perplexity, требуют VPN для работы из РФ. Perplexity работает без VPN, но код придётся копировать вручную. Урок не привязан к конкретному инструменту — промпты универсальны.</p>
+<p>Рекомендация (если есть VPN): Antigravity — самая щедрая бесплатная квота, хватит на весь проект.</p></div></div>
+<div class="rich-item"><div class="rich-num">2</div><div class="rich-body"><strong>Два независимых диалога</strong><p>Первый чат — пишет код. Второй — проверяет.</p>
+<p>Зачем: ИИ, который написал код, не будет искать в нём проблемы. Спросите «всё ли ок?» — он скажет «да». Даже если нет. Он защищает своё решение. Поэтому проверять нужно в отдельном диалоге — тот ИИ код не писал и не будет его выгораживать.</p>
+<p>Откройте два чата в одном инструменте: нажмите «+» (новый диалог). Два диалога не видят друг друга — это важно.</p></div></div>
+<div class="rich-item"><div class="rich-num">3</div><div class="rich-body"><strong>Аккаунты для деплоя</strong><p>Зарегистрируйтесь на amvera.ru — это хостинг, на котором вы опубликуете проект. Аккаунт в Telegram у вас уже есть — через него будут приходить уведомления о заявках.</p></div></div>
+<div class="rich-item"><div class="rich-num">4</div><div class="rich-body"><strong>Установка инструментов</strong><p>Скопируйте в рабочий чат:</p>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОМПТ</span><button class="copy-btn" data-target="p1">Копировать</button></div><pre class="prompt-body" id="p1">Мне нужно подготовить компьютер к веб-разработке.
+Проверь, установлены ли: Node.js 22+, Bun, Docker, Git.
+Если чего-то нет — установи. Я на [Windows / macOS / Linux].
+После установки покажи версии всех четырёх инструментов.</pre></div>
+<p>Замените [Windows / macOS / Linux] на вашу операционную систему. Агент сам определит, чего не хватает, и установит.</p></div></div>
+<h2>ВВЕДЕНИЕ</h2>
+<p>В этом уроке вы разберёте, как устроен лендинг для сбора заявок — от первого экрана до деплоя на сервер. Ваша задача — понимать архитектуру, правильно формулировать запросы и проверять результат.</p>
+<p>Проект называется Vibe Landing Starter: одностраничный сайт, который собирает контакты потенциальных клиентов (лидов), сохраняет их в базу данных, а когда приходит новая заявка — присылает вам уведомление в Telegram, чтобы вы сразу могли связаться с клиентом.</p>
+<h3>Что вы будете понимать после урока:</h3>
+<ol>
+<li>Из каких секций собирать лендинг и зачем нужна каждая</li>
+<li>Какие данные собирать с формы заявки и как хранить их в базе</li>
+<li>Как отслеживать, что делают посетители на странице</li>
+<li>Как принимать данные от внешних сервисов и не обрабатывать одну заявку дважды</li>
+<li>Как получать уведомления о новых заявках в Telegram</li>
+<li>Как опубликовать сайт в интернете и настроить его</li>
+</ol>
+<p>Стек проекта: Next.js, TypeScript, Tailwind CSS, Prisma + PostgreSQL. Названия технологий знать не обязательно — ИИ подберёт и настроит их сам. Вам важно понимать, зачем каждая часть нужна и как они связаны.</p>
+<hr>
+<h3>Как настроить второй чат (проверяющий): готовый промпт</h3>
+<p>Первый чат генерирует код — ему не нужна особая настройка. Второй чат проверяет. Чтобы он работал жёстко и не «жалел» чужой код, начните диалог с такого промпта:</p>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОМПТ ДЛЯ ВТОРОГО ЧАТА (ПРОВЕРЯЮЩЕГО)</span><button class="copy-btn" data-target="p2">Копировать</button></div><pre class="prompt-body" id="p2">Ты — придирчивый проверяющий. Твоя задача — находить
+проблемы, а не хвалить. Для каждого вопроса, который
+я задам:
+1. Проследи путь выполнения по шагам (что вызывается,
+в каком порядке, что возвращается)
+2. Ответь конкретно: «да, сломается» или «нет, вот
+почему защищено» — со ссылкой на строку кода
+3. Если нашёл проблему — предложи конкретное
+исправление, не абстрактный совет
+Не говори «в целом хорошо». Я спрашиваю не для
+комплиментов.</pre></div>
+<p>После этого задавайте вопросы из блоков «Как проверить через ИИ» в уроке. Если проверяющий просит показать код или файл — скопируйте из рабочего чата.</p>
+<h3>Рабочий цикл выглядит так:</h3>
+<div class="wf-diagram">
+  <div class="wf-step"><span class="wf-num">1</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat1">Первый чат</span><span class="wf-what">промпт с задачей</span></div>
+  <div class="wf-step"><span class="wf-num">2</span><span class="wf-from chat1">Первый чат</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">сгенерированный код</span></div>
+  <div class="wf-step"><span class="wf-num">3</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat2">Второй чат</span><span class="wf-what">вопрос на проверку</span></div>
+  <div class="wf-step"><span class="wf-num">4</span><span class="wf-from chat2">Второй чат</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">найденная проблема</span></div>
+  <div class="wf-step"><span class="wf-num">5</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat1">Первый чат</span><span class="wf-what">&laquo;исправь&raquo; + описание проблемы</span></div>
+  <div class="wf-step"><span class="wf-num">6</span><span class="wf-from chat1">Первый чат</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">исправленный код</span></div>
+  <div class="wf-step"><span class="wf-num">7</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat2">Второй чат</span><span class="wf-what">проверить исправление</span></div>
+  <div class="wf-step"><span class="wf-num">8</span><span class="wf-from chat2">Второй чат</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">&laquo;ок&raquo;</span></div>
+</div>
+<p>Вы — посередине. Первый чат генерирует, второй ломает, вы принимаете решение. Не нужно разбираться в каждой строке кода — нужно задавать правильные вопросы правильному чату.</p>
+<h2>ЧАСТЬ 1. СТРУКТУРА ЛЕНДИНГА</h2>
+<div class="edu-result">Образовательный результат: вы понимаете, как собирать лендинг из 5 обязательных секций (Hero / Proof / Benefits / FAQ / CTA) с логичной навигацией и читаемой иерархией.</div>
+<hr>
+<h3>Зачем именно 5 секций</h3>
+<p>Лендинг — не визитка, а воронка. Каждая секция решает одну задачу и подталкивает посетителя к следующей:</p>
+<div class="funnel">
+  <div class="funnel-row" style="--clr:#FFD600"><div class="funnel-name">HERO</div><div class="funnel-desc">Привлечь внимание</div><div class="funnel-sub">Главное обещание + призыв</div></div>
+  <div class="funnel-row" style="--clr:#FFE44D"><div class="funnel-name">PROOF</div><div class="funnel-desc">Доказать</div><div class="funnel-sub">Цифры, факты, отзывы</div></div>
+  <div class="funnel-row" style="--clr:#FFED80"><div class="funnel-name">BENEFITS</div><div class="funnel-desc">Объяснить выгоду</div><div class="funnel-sub">Что конкретно получит клиент</div></div>
+  <div class="funnel-row" style="--clr:#FFF4B3"><div class="funnel-name">FAQ</div><div class="funnel-desc">Снять возражения</div><div class="funnel-sub">Ответы на сомнения</div></div>
+  <div class="funnel-row" style="--clr:#FFF8CC"><div class="funnel-name">CTA</div><div class="funnel-desc">Собрать заявку</div><div class="funnel-sub">Форма + финальный призыв</div></div>
+</div>
+<p>Hero — первый экран. Посетитель решает за 3–5 секунд, остаться или уйти. Одно короткое обещание («Соберите продуктовую страницу за вечер») и кнопка действия — больше ничего.</p>
+<p>Proof — социальное доказательство. Цифры, количество клиентов, скорость — конкретика, а не слова. «300+ клиентов» убедительнее, чем «нам доверяют».</p>
+<p>Benefits — конкретные преимущества. Не «мы лучшие», а что именно получает клиент. 3–4 карточки с коротким описанием.</p>
+<p>FAQ — ответы на частые вопросы. Посетитель почти готов оставить заявку, но сомневается. FAQ снимает эти сомнения.</p>
+<p>CTA (Call to Action) — форма сбора заявок. Финальный призыв и поля для контактных данных.</p>
+<p>Уберите любую секцию — воронка сломается. Без Proof обещание голословно. Без FAQ сомнения не сняты, конверсия падает.</p>
+<hr>
+<h3>Два архитектурных принципа</h3>
+<ol>
+<li>Каждая секция — отдельный компонент. ИИ создаст 5 файлов (Hero, Proof, Benefits, Faq, Cta), а главная страница соберёт их в нужном порядке. Хотите поменять местами Benefits и FAQ? Переставьте две строчки — без переделки всей страницы.</li>
+<li>Контент отдельно от вёрстки. Весь текст лендинга живёт в одном файле — заголовки, описания, вопросы для FAQ. Компоненты берут текст оттуда, а не хранят в себе. Поменять заголовок или добавить пункт в FAQ — правка в одном месте, без поиска по десяти файлам.</li>
+</ol>
+<hr>
+<h3>Промпт-подсказка</h3>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p3">«Создай лендинг из 5 секций: Hero с заголовком и кнопкой CTA, Proof с 6 цифровыми метриками, Benefits с 4 карточками преимуществ, FAQ с 5 раскрывающимися вопросами, CTA с формой (имя + контакт + чекбокс согласия). Каждую секцию сделай отдельным компонентом. Весь текст вынеси в отдельный файл — не хардкодь в компонентах. Приложение должно слушать порт 80.»</blockquote><button class="copy-btn small" data-target="p3">Копировать промпт</button></div>
+<hr>
+<h3>Что проверить в ответе ИИ / скинуть проверяющему агенту</h3>
+<ul class="checklist">
+<li>Все 5 секций на месте и идут в правильном порядке</li>
+<li>Каждая секция — отдельный файл (не всё в одном)</li>
+<li>Текст вынесен в отдельный файл, не разбросан по компонентам</li>
+<li>Кнопка в Hero ведёт к форме в CTA (якорная ссылка или скролл)</li>
+<li>FAQ раскрывается/сворачивается по клику</li>
+</ul>
+<hr>
+<h3>Где ИИ может ошибиться</h3>
+<ul>
+<li>Свалить все секции в один файл. Попросите разбить.</li>
+<li><strong>Захардкодить текст прямо в компоненты. Напомните</strong>: «Контент вынеси отдельно, я хочу менять текст в одном месте».</li>
+<li><strong>Забыть навигацию</strong>: кнопка в Hero есть, но никуда не ведёт.</li>
+</ul>
+<h2>ЧАСТЬ 2. ЛИД-ФОРМА И РАБОТА С ДАННЫМИ</h2>
+<div class="edu-result">Образовательный результат: вы понимаете, как проектировать модель данных лида в Postgres (поля, ограничения, уникальность).</div>
+<hr>
+<h3>Что такое лид</h3>
+<p>Лид — потенциальный клиент, который оставил контактные данные. Для бизнеса лид ценен: это человек, который уже заинтересовался. Форма на лендинге собирает лидов, а база данных их хранит.</p>
+<hr>
+<h3>Модель данных</h3>
+<p>Модель данных — описание того, что вы храните в базе. Для лида нужно три поля от пользователя и два автоматических:</p>
+<p><strong>ТАБЛИЦА: leads</strong></p><table><thead><tr><th>Поле</th><th>Тип</th><th>Зачем</th></tr></thead><tbody><tr><td>id</td><td>Строка</td><td>Уникальный адрес записи (авто)</td></tr><tr><td>name</td><td>Текст</td><td>Имя (до 200 символов)</td></tr><tr><td>contact</td><td>Текст</td><td>Телефон/email/TG (до 300 символов)</td></tr><tr><td>consent</td><td>Да/Нет</td><td>Согласие на обработку данных</td></tr><tr><td>createdAt</td><td>Дата</td><td>Когда создана запись (авто)</td></tr></tbody></table>
+<p>Почему важны ограничения:</p>
+<ul>
+<li>Длина текста (200, 300 символов) — если кто-то отправит 10 000 символов в поле «Имя», база отклонит запрос. Ограничение — защита от мусора.</li>
+<li>Согласие — только «да» или «нет», без промежуточных вариантов. В базу не попадёт «maybe» или «123».</li>
+<li>ID и дата — заполняются автоматически, студенту и пользователю не нужно ничего вводить.</li>
+</ul>
+<hr>
+<h3>Что такое миграция</h3>
+<p>Описать модель — половина дела. Нужно ещё создать таблицу в базе. Это делает миграция — скрипт, который создаёт или обновляет структуру таблиц. Иногда миграция меняет и сами данные — например, заполняет новое поле значениями по умолчанию.</p>
+<p>Аналогия: модель — чертёж дома, миграция — бригада строителей, которая по этому чертежу возводит стены.</p>
+<p>Изменили модель (добавили поле, поменяли тип) — нужна новая миграция. Без неё база не узнает об изменениях.</p>
+<hr>
+<h3>Как форма связана с базой</h3>
+<p>Путь данных от пользователя до базы:</p>
+<div class="pipe-diagram">
+  <div class="pipe-row">
+    <div class="pipe-box">Форма<small>(браузер)</small></div>
+    <div class="pipe-arrow">отправка &rarr;</div>
+    <div class="pipe-box accent">Сервер<small>валидация + сохранение</small></div>
+    <div class="pipe-arrow">сохранение &rarr;</div>
+    <div class="pipe-box">База<small>(leads)</small></div>
+  </div>
+  <div class="pipe-branch">&darr; параллельно</div>
+  <div class="pipe-row small"><div class="pipe-box tg">Telegram</div></div>
+</div>
+<ol>
+<li>Пользователь заполняет поля и нажимает «Отправить»</li>
+<li>Данные уходят на сервер</li>
+<li>Сервер проверяет: имя заполнено? Контакт есть? Согласие отмечено?</li>
+<li>Если всё ок — сохраняет лид в базу</li>
+<li>Параллельно отправляет уведомление в Telegram (но не ждёт ответа)</li>
+<li>Пользователь видит в браузере «Принято» или текст ошибки</li>
+</ol>
+<p>Telegram вызывается «на автомате» — если мессенджер не ответил, лид всё равно сохранён. Подробнее — в части 5.</p>
+<hr>
+<h3>Промпт-подсказка</h3>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p4">«Добавь форму сбора лидов. Поля: имя (до 200 символов), контакт (до 300), чекбокс согласия на обработку данных. Сохраняй в PostgreSQL через Prisma. Автоматически генерируй ID и дату создания. При сохранении — валидируй все поля на сервере (не только на клиенте). Создай миграцию.»</blockquote><button class="copy-btn small" data-target="p4">Копировать промпт</button></div>
+<hr>
+<h3>Что проверить в ответе ИИ / скинуть проверяющему агенту</h3>
+<ul class="checklist">
+<li>У текстовых полей есть ограничение длины (VarChar)</li>
+<li>Согласие — Boolean, а не String</li>
+<li>id и createdAt заполняются автоматически (@default)</li>
+<li>Валидация есть на сервере, а не только в браузере</li>
+<li>Создана миграция (не только модель)</li>
+</ul>
+<hr>
+<h3>Где ИИ может ошибиться</h3>
+<ul>
+<li>Не поставить ограничение длины. Без VarChar(200) поле принимает любую длину — база может раздуться от мусорных данных.</li>
+<li>Сделать согласие строкой вместо Boolean. Тогда в базу можно записать что угодно, не только «да» или «нет».</li>
+<li>Валидировать только в браузере. Пользователь может отключить JavaScript или отправить запрос напрямую через API — серверная валидация обязательна.</li>
+<li>Забыть миграцию. Модель описана, но таблица в базе не создана — приложение упадёт с ошибкой.</li>
+</ul>
+<hr>
+<h3>Как проверить через ИИ</h3>
+<p>Откройте отдельный чат (проверяющий). Покажите ему модель данных и серверную функцию сохранения лида. Задайте вопрос:</p>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p5">«Я отправляю POST-запрос напрямую через curl, минуя браузер. Поле name — пустая строка, consent — false. Пройдёт ли запись в базу? Покажи путь выполнения по шагам.»</blockquote><button class="copy-btn small" data-target="p5">Копировать промпт</button></div>
+<p>Правильный ответ: сервер отклонит запрос ещё до обращения к базе. Если проверяющий говорит, что запись пройдёт — валидация только на клиенте, а на сервере её нет. Попросите ИИ-автора добавить серверную проверку.</p>
+<h2>ЧАСТЬ 3. СОБЫТИЙНОСТЬ И АУДИТ</h2>
+<div class="edu-result">Образовательный результат: вы понимаете, как инструментировать продукт событиями конверсии (landing_view, cta_click, lead_created) и писать их в БД.</div>
+<hr>
+<h3>Зачем отслеживать события</h3>
+<p>У вас есть лендинг. Сколько человек его открыли? Сколько дошли до формы? Сколько отправили заявку? Без трекинга конверсий это загадка.</p>
+<p>Журнал событий (event log) позволяет считать воронку:</p>
+<pre><code>1000 landing_view  →  120 cta_click  →  30 lead_created
+     100%                 12%               2,5%</code></pre>
+<p>Из 1000 посетителей 120 кликнули на CTA, из них 30 оставили заявку. Теперь вы видите, где теряются люди, и можете улучшить конкретную секцию.</p>
+<hr>
+<h3>Три события конверсии</h3>
+<table><thead><tr><th>Событие</th><th>Когда срабатывает</th><th>Где происходит</th></tr></thead><tbody>
+<tr><td>landing_view</td><td>Посетитель открыл страницу</td><td>Браузер</td></tr>
+<tr><td>cta_click</td><td>Нажал кнопку «Оставить заявку»</td><td>Браузер</td></tr>
+<tr><td>lead_created</td><td>Заявка сохранена в базу</td><td>Сервер</td></tr>
+</tbody></table>
+<p>Первые два отправляются из браузера в момент действия. Третье записывается на сервере автоматически — при сохранении лида.</p>
+<hr>
+<h3>Как данные текут</h3>
+<div class="ev-diagram">
+  <div class="ev-step"><span class="ev-event browser">landing_view</span><span class="ev-where">Браузер отправляет при открытии страницы</span></div>
+  <div class="ev-step"><span class="ev-event browser">cta_click</span><span class="ev-where">Браузер отправляет при клике на кнопку</span></div>
+  <div class="ev-step"><span class="ev-event server">lead_created</span><span class="ev-where">Сервер записывает при сохранении лида</span></div>
+</div>
+<p>Каждое событие — отдельная строка в таблице conversion_events. У события есть тип (из фиксированного набора: landing_view, cta_click, lead_created) и дата.</p>
+<p>Тип — не произвольная строка. Это enum: база данных примет только одно из трёх разрешённых значений. Опечатка вроде «landng_view» не пройдёт.</p>
+<hr>
+<p>Принцип: трекинг не ломает UX</p>
+<p>Если сервер трекинга недоступен, посетитель этого не заметит. Страница работает как обычно, просто событие не запишется. Это осознанное решение: трекинг — вспомогательная функция. Его отказ не должен мешать основному сценарию.</p>
+<p>Аналогия: камера видеонаблюдения в магазине. Если камера сломалась, магазин не закрывается — покупатели продолжают покупать. Просто этот момент не записан.</p>
+<hr>
+<h3>Промпт-подсказка</h3>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p6">«Добавь трекинг конверсий. Три события: landing_view (при открытии страницы), cta_click (при клике на CTA-кнопку), lead_created (при сохранении лида). Тип события — enum, не строка. Храни в отдельной таблице conversion_events с индексами по типу и дате. Если трекинг упал — страница должна работать без ошибок, лови исключения (то есть оборачивай вызов в try/catch, чтобы ошибка трекинга не сломала основную функцию).»</blockquote><button class="copy-btn small" data-target="p6">Копировать промпт</button></div>
+<hr>
+<h3>Что проверить в ответе ИИ / скинуть проверяющему агенту</h3>
+<ul class="checklist">
+<li>Три события: landing_view, cta_click, lead_created</li>
+<li>Тип события — enum (фиксированный набор), не произвольная строка</li>
+<li>Есть индексы по типу и по дате (для быстрых выборок)</li>
+<li>Ошибки трекинга не показываются пользователю (silent failure)</li>
+<li>landing_view срабатывает при загрузке страницы, не при скролле или клике</li>
+</ul>
+<hr>
+<h3>Где ИИ может ошибиться</h3>
+<ul>
+<li>Сделать тип события строкой вместо enum. Тогда в базу может попасть любой мусор.</li>
+<li>Не добавить индексы. Без них запрос «покажи все lead_created за февраль» будет медленным при сотнях тысяч записей.</li>
+<li>Показать ошибку пользователю, если трекинг не сработал. Попросите явно: «Ошибки трекинга — молча проглатывай».</li>
+</ul>
+<hr>
+<h3>Как проверить через ИИ</h3>
+<p>Покажите проверяющему код трекинга и спросите:</p>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p7">«Сервер /api/events лежит и возвращает 500. Пользователь открывает лендинг и кликает CTA. Что он увидит? Будет ли страница работать?»</blockquote><button class="copy-btn small" data-target="p7">Копировать промпт</button></div>
+<p>Правильный ответ: страница работает как обычно, пользователь ничего не замечает. Если проверяющий говорит «пользователь увидит ошибку» или «страница зависнет» — ошибки трекинга не обрабатываются. Попросите ИИ-автора обернуть вызовы в try/catch с пустым блоком.</p>
+<h2>ЧАСТЬ 4. WEBHOOK INBOX + БЕЗОПАСНОСТЬ + ИДЕМПОТЕНТНОСТЬ</h2>
+<div class="edu-result">Образовательный результат: вы понимаете, как обрабатывать входящие события и логировать их в event log с сохранением полезного payload.</div>
+<hr>
+<h3>Зачем нужен webhook</h3>
+<p>Допустим, вы подключили платёжную систему. Клиент оплатил заказ — как вам об этом узнать?</p>
+<p>Вариант 1 — polling: ваш сервер каждые 5 секунд спрашивает платёжку «Есть новые платежи?». 99% запросов впустую.</p>
+<p>Вариант 2 — webhook: платёжка сама присылает запрос на ваш сервер, когда платёж прошёл. Вы не опрашиваете — вам сообщают.</p>
+<div class="compare-box">
+  <div class="compare-row bad"><strong>Polling:</strong> Вы &rarr; Сервис &laquo;Что нового?&raquo; <em>(каждые 5 сек, почти всегда впустую)</em></div>
+  <div class="compare-row good"><strong>Webhook:</strong> Сервис &rarr; Вы &laquo;Вот что произошло&raquo; <em>(только когда есть событие)</em></div>
+</div>
+<p>Webhook экономит ресурсы и работает в реальном времени.</p>
+<hr>
+<h3>Как устроен приём вебхуков</h3>
+<p>Внешний сервис отправляет POST-запрос на ваш адрес. Ваше приложение проходит три проверки и сохраняет событие:</p>
+<div class="webhook-diagram">
+  <div class="wh-incoming">
+    <div class="wh-incoming-title">Входящий запрос от внешнего сервиса</div>
+    <code>POST /api/webhook</code> &nbsp; <code>x-webhook-secret: ***</code> &nbsp; <code>{ idempotencyKey, eventType, payload }</code>
+  </div>
+  <ol class="wh-steps">
+    <li class="wh-step"><span class="wh-step-num">1</span><span class="wh-step-check">Секрет совпадает?</span><span class="wh-step-pass">Да &rarr; дальше</span><span class="wh-step-fail red">Нет &rarr; 401</span></li>
+    <li class="wh-step"><span class="wh-step-num">2</span><span class="wh-step-check">Все поля на месте?</span><span class="wh-step-pass">Да &rarr; дальше</span><span class="wh-step-fail red">Нет &rarr; 400</span></li>
+    <li class="wh-step"><span class="wh-step-num">3</span><span class="wh-step-check">Ключ уже был?</span><span class="wh-step-pass">Нет &rarr; дальше</span><span class="wh-step-fail amber">Да &rarr; 200 (дубль)</span></li>
+    <li class="wh-step ok"><span class="wh-step-num">4</span><span class="wh-step-check">Сохранить в БД</span><span class="wh-step-fail green">&rarr; 201 Created</span></li>
+  </ol>
+  <div class="wh-legend">
+    <strong>Что за числа?</strong> HTTP-коды — стандартные сигналы, которыми сервер отвечает на любой запрос. Группы фиксированы, а точный смысл зависит от приложения:<br>
+    <span class="wh-step-fail green">2xx</span>&nbsp;успех (тут: 201 = создано, 200 = ок, уже есть) &nbsp;&middot;&nbsp;
+    <span class="wh-step-fail red">4xx</span>&nbsp;ошибка клиента (тут: 400 = кривой запрос, 401 = нет доступа)
+  </div>
+</div>
+<hr>
+<h3>Безопасность: зачем нужен секрет</h3>
+<p>Webhook-адрес — публичный URL. Любой может отправить на него запрос. Без защиты злоумышленник может засыпать вашу базу мусорными событиями.</p>
+<p>Секрет (WEBHOOK_SECRET) — пароль, который знаете только вы и отправитель. Отправитель кладёт секрет в заголовок запроса, ваше приложение сравнивает его со своим. Не совпало — 401 (Unauthorized), запрос отклонён.</p>
+<p>Важный нюанс: если вы забыли задать WEBHOOK_SECRET в переменных окружения, его значение — пустая строка. Секрет из заголовка (реальная строка) не совпадёт с пустотой → 401 для всех запросов, включая настоящие. Все вебхуки будут отклоняться.</p>
+<p>Аналогия: домофонный код. Дверь подъезда (URL) видна всем. Но зайти может только тот, кто знает код.</p>
+<hr>
+<h3>Идемпотентность: защита от дубликатов</h3>
+<p>Сеть ненадёжна. Внешний сервис отправил webhook, но не дождался ответа (таймаут, обрыв связи). Что он делает? Отправляет повторно. И ещё раз.</p>
+<p>Без защиты каждый повтор создаёт дубликат в базе: три попытки — три одинаковых записи.</p>
+<p>Идемпотентность — гарантия, что повторный запрос с тем же ключом не создаст дубль. Как это работает:</p>
+<pre><code>Запрос 1: idempotencyKey = &quot;pay-123&quot;  →  201 Created (сохранено)
+Запрос 2: idempotencyKey = &quot;pay-123&quot;  →  200 OK (дубликат, не сохраняем)
+Запрос 3: idempotencyKey = &quot;pay-123&quot;  →  200 OK (дубликат, не сохраняем)</code></pre>
+<p>Механизм прост: поле idempotencyKey в базе помечено как уникальное (@unique). Два события с одинаковым ключом физически не могут существовать. При попытке вставить дубликат база выбрасывает ошибку, приложение ловит её и возвращает 200 OK — «спасибо, уже получили».</p>
+<p>Модель данных для вебхук-событий:</p>
+<pre><code>model WebhookEvent {
+  id             String   @id @default(cuid())
+  idempotencyKey String   @unique          -- ключ уникальности
+  eventType      String                    -- тип события
+  payload        Json                      -- полезная нагрузка (любые данные)
+  receivedAt     DateTime @default(now())  -- когда получено
+}</code></pre>
+<p>@unique на idempotencyKey — это и есть защита от дубликатов. Одна аннотация в схеме, а решает целый класс проблем.</p>
+<hr>
+<h3>Промпт-подсказка</h3>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p8">«Создай webhook-эндпоинт POST /api/webhook. Три проверки: 1) Секрет из заголовка x-webhook-secret совпадает с переменной окружения WEBHOOK_SECRET — иначе 401. 2) В теле обязательны idempotencyKey, eventType, payload — иначе 400. 3) idempotencyKey уникален в базе — при дубликате возвращай 200 (не 500!). Храни в таблице webhook_events.»</blockquote><button class="copy-btn small" data-target="p8">Копировать промпт</button></div>
+<hr>
+<h3>Что проверить в ответе ИИ / скинуть проверяющему агенту</h3>
+<ul class="checklist">
+<li>Секрет проверяется ДО обработки данных (не после)</li>
+<li>idempotencyKey — @unique в модели</li>
+<li>При дубликате — 200 OK, а не 500 (ошибка) и не 409 (конфликт)</li>
+<li>Payload хранится целиком (тип Json), не теряются данные</li>
+<li>Все три обязательных поля валидируются</li>
+</ul>
+<hr>
+<h3>Где ИИ может ошибиться</h3>
+<ul>
+<li><strong>Не обработать дубликат</strong>: при повторном webhook приложение вернёт 500 Internal Server Error. Внешний сервис решит, что что-то сломалось, и будет слать ещё и ещё.</li>
+<li>Проверить секрет после сохранения. Тогда злоумышленник без секрета уже записал мусор в базу — проверка бессмысленна.</li>
+<li>Сделать idempotencyKey обычным полем без @unique. Тогда дубликаты спокойно пройдут — защиты не будет.</li>
+</ul>
+<hr>
+<h3>Как проверить через ИИ</h3>
+<p>Webhook — самая сложная часть проекта. ИИ-автор почти наверняка скажет «всё реализовано». Не верьте на слово. Откройте проверяющего и задайте три вопроса:</p>
+<div class="rich-item"><div class="rich-num">1</div><div class="rich-body"><strong>Порядок проверок:</strong><p>«Я отправляю POST /api/webhook без заголовка x-webhook-secret, но с валидным телом. Запишутся ли данные в базу? Покажи строку кода, где происходит проверка секрета, и строку, где происходит запись.»</p>
+<p>Проверка секрета ДОЛЖНА быть раньше записи в базу. Если нет — данные злоумышленника попадут в базу до проверки.</p></div></div>
+<div class="rich-item"><div class="rich-num">2</div><div class="rich-body"><strong>Идемпотентность:</strong><p>«Я отправляю два одинаковых запроса с idempotencyKey = &quot;test-1&quot;. Первый вернул 201. Что вернёт второй? Сколько записей будет в базе?»</p>
+<p>Правильный ответ: второй запрос — 200 OK, записей — одна. Если проверяющий говорит «500» или «две записи» — защита не работает.</p></div></div>
+<div class="rich-item"><div class="rich-num">3</div><div class="rich-body"><strong>Безопасность:</strong><p>«Ты — аудитор безопасности. Какие способы обойти проверку секрета ты видишь в этом коде?»</p>
+<p>Хороший код не даёт способов обхода. Если проверяющий находит лазейки — покажите его ответ ИИ-автору и попросите исправить.</p></div></div>
+<h2>ЧАСТЬ 5. ИНТЕГРАЦИИ: TELEGRAM-УВЕДОМЛЕНИЯ</h2>
+<div class="edu-result">Образовательный результат: вы понимаете, как интегрировать отправку уведомления в Telegram при lead_created, с минимальной, но полезной структурой сообщения.</div>
+<hr>
+<h3>Зачем уведомлять в Telegram</h3>
+<p>Заявки хранятся в базе — но кто туда заглядывает каждый час? Уведомление приходит мгновенно. Менеджер видит новую заявку и перезванивает через 5 минут, а не через 5 часов.</p>
+<hr>
+<h3>Настройка: бот и чат</h3>
+<p>Для отправки нужны две вещи:</p>
+<ul>
+<li>Бот (TELEGRAM_BOT_TOKEN) — кто отправляет. Токен — это ключ доступа к боту, без него нельзя отправить сообщение.</li>
+<li>Чат (TELEGRAM_CHAT_ID) — куда отправлять. Это числовой адрес конкретного чата, в который бот будет писать уведомления о заявках.</li>
+</ul>
+<h3>Создание бота:</h3>
+<ol>
+<li>Откройте Telegram, найдите @BotFather</li>
+<li>Отправьте /newbot</li>
+<li>Придумайте имя и username (должен заканчиваться на bot)</li>
+<li>BotFather пришлёт токен вида 7123456789:AAF1234abcd... — это TELEGRAM_BOT_TOKEN</li>
+</ol>
+<h3>Получение Chat ID:</h3>
+<ol>
+<li>Напишите боту любое сообщение</li>
+<li>Откройте в браузере: https://api.telegram.org/bot&lt;ВАШ_ТОКЕН&gt;/getUpdates</li>
+<li>Найдите &quot;chat&quot;:{&quot;id&quot;: 123456789} — число после id это TELEGRAM_CHAT_ID</li>
+</ol>
+<p>Ответ пустой? Отправьте боту ещё одно сообщение и обновите страницу.</p>
+<hr>
+<h3>Формат уведомления</h3>
+<p>При новой заявке менеджер получает сообщение:</p>
+<div class="tg-msg">
+  <div class="tg-msg-title">Новая заявка</div>
+  <div class="tg-msg-body"><strong>Имя:</strong> Алексей<br><strong>Контакт:</strong> +7 900 123-45-67</div>
+</div>
+<p>Минимум — но достаточно для звонка. Не нужно открывать базу или админку.</p>
+<hr>
+<h3>Два принципа, о которых стоит знать</h3>
+<p>Fire-and-forget (отправил и забыл). Уведомление отправляется параллельно, не блокируя ответ пользователю. Если Telegram не ответил — ошибка тихо проглатывается. Лид уже в базе, пользователь видит «Принято».</p>
+<p>Почему это важно: Telegram API иногда тормозит или не отвечает. Если ждать ответа, пользователь зависнет на 30 секунд и уйдёт. А лид при этом уже мог быть сохранён.</p>
+<p>Graceful degradation (плавная деградация). Если TELEGRAM_BOT_TOKEN не указан в настройках, приложение не пытается отправить — просто пропускает этот шаг. Лендинг работает полноценно без Telegram. Можно сначала задеплоить, а бота настроить позже.</p>
+<hr>
+<h3>Промпт-подсказка</h3>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p9">«При создании лида отправляй уведомление в Telegram. Используй Telegram Bot API (метод sendMessage). Токен и chat_id бери из переменных окружения. Если переменные не заданы — пропускай отправку без ошибки. Отправляй параллельно, не блокируй ответ пользователю. Если Telegram не ответил — молча проглоти ошибку, лид уже сохранён.»</blockquote><button class="copy-btn small" data-target="p9">Копировать промпт</button></div>
+<hr>
+<h3>Что проверить в ответе ИИ / скинуть проверяющему агенту</h3>
+<ul class="checklist">
+<li>Уведомление не блокирует сохранение лида (fire-and-forget)</li>
+<li>Если токен не задан — нет ошибки, просто пропуск</li>
+<li>Если Telegram не ответил — пользователь не видит ошибку</li>
+<li>В сообщении есть имя и контакт (а не просто «новый лид»)</li>
+</ul>
+<hr>
+<h3>Где ИИ может ошибиться</h3>
+<ul>
+<li><strong>Сделать отправку блокирующей</strong>: если Telegram не отвечает 30 секунд, пользователь ждёт 30 секунд. Или получает ошибку, хотя лид сохранён.</li>
+<li><strong>Не проверить наличие токена</strong>: приложение падает при запуске, если переменные не заданы.</li>
+<li><strong>Упасть при ошибке Telegram</strong>: лид не сохраняется, потому что код пытается отправить уведомление до сохранения.</li>
+</ul>
+<hr>
+<h3>Как проверить через ИИ</h3>
+<p>Покажите проверяющему серверную функцию создания лида и задайте вопрос:</p>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p10">«Telegram API не отвечает 30 секунд. Пользователь нажал &quot;Отправить&quot;. Опиши по шагам, что произойдёт. Когда именно пользователь увидит ответ — до или после ответа Telegram?»</blockquote><button class="copy-btn small" data-target="p10">Копировать промпт</button></div>
+<p>Правильный ответ: пользователь увидит «Принято» почти мгновенно, потому что Telegram вызывается асинхронно и без ожидания результата. Если проверяющий говорит «пользователь будет ждать 30 секунд» — fire-and-forget не реализован, отправка блокирующая.</p>
+<h3>Ещё один вопрос:</h3>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p11">«TELEGRAM_BOT_TOKEN не задан в переменных окружения. Что произойдёт при создании лида? Приложение упадёт, покажет ошибку или проигнорирует?»</blockquote><button class="copy-btn small" data-target="p11">Копировать промпт</button></div>
+<p>Правильный ответ: проигнорирует. Если проверяющий говорит «ошибка» — нет проверки наличия токена.</p>
+<h2>ЧАСТЬ 6. ДЕПЛОЙ И ИНФРАСТРУКТУРА</h2>
+<div class="edu-result">Образовательный результат: вы понимаете, как деплоить приложение и предоставлять живой URL; конфигурировать переменные окружения (DB_URL, TG_TOKEN, WEBHOOK_SECRET и т.д.).</div>
+<hr>
+<h3>Переменные окружения</h3>
+<p>Приложению нужны настройки: адрес базы данных, токен Telegram-бота, секрет для вебхуков. Эти данные нельзя хранить в коде — иначе они попадут в git, а оттуда куда угодно.</p>
+<p>Переменные окружения — настройки, которые приложение читает при запуске. Они живут отдельно от кода:</p>
+<ul>
+<li>Локально — в файле .env</li>
+<li>На сервере — в панели управления хостинга</li>
+</ul>
+<p>Аналогия: код — это рецепт блюда. Переменные окружения — конкретные ингредиенты. Рецепт один и тот же, но в тестовой среде вы используете тестовую базу, а в продакшене — настоящую. Рецепт не меняется.</p>
+<h3>Переменные проекта:</h3>
+<table><thead><tr><th>Переменная</th><th>Пример</th><th>Секрет?</th></tr></thead><tbody>
+<tr><td>DATABASE_URL</td><td>postgresql://user:pass@host:5432/db?schema=public</td><td>Да</td></tr>
+<tr><td>WEBHOOK_SECRET</td><td>xK9m2Lp7qR4wT1nB</td><td>Да</td></tr>
+<tr><td>TELEGRAM_BOT_TOKEN</td><td>7123456789:AAF1234abcd...</td><td>Да</td></tr>
+<tr><td>TELEGRAM_CHAT_ID</td><td>123456789</td><td>Нет</td></tr>
+</tbody></table>
+<p>Правило: если в значении есть пароль, токен или ключ — это секрет. Секреты никогда не коммитятся в репозиторий.</p>
+<p>Если что-то не работает после деплоя — в первую очередь проверяйте переменные окружения. Например, ошибка подключения к базе в логах почти всегда означает опечатку в DATABASE_URL: неправильный пароль, хост или кириллица вместо латиницы.</p>
+<hr>
+<h3>Docker: зачем</h3>
+<p>Docker упаковывает приложение со всеми зависимостями в контейнер — изолированную среду, которая одинаково работает на любом сервере.</p>
+<pre><code>Без Docker:  «У меня работает, а на сервере — нет»
+С Docker:    На сервере ровно та же среда, что у вас</code></pre>
+<p>При запуске контейнера автоматически происходит:</p>
+<ol>
+<li>Миграция базы данных (создаются таблицы, если их ещё нет)</li>
+<li>Запуск приложения</li>
+</ol>
+<p>Вам не нужно разбираться в устройстве Docker-файла — ИИ сгенерирует его сам. Вам нужно понимать одно: Docker = «моё приложение запустится на любом сервере без сюрпризов».</p>
+<hr>
+<h3>Пошаговый деплой на Amvera Cloud</h3>
+<p>Amvera — российский облачный хостинг. Бесплатного тарифа хватит для демо.</p>
+<h3>Шаг 1. Регистрация</h3>
+<p>Зарегистрируйтесь на amvera.ru.</p>
+<h3>Шаг 2. Создайте базу данных</h3>
+<p>В левом меню откройте «PostgreSQL» -&gt; «Создать базу данных».</p>
+<p>Заполните форму:</p>
+<ul>
+<li><strong>Postgres version</strong>: оставьте как есть (17.5)</li>
+<li><strong>Имя создаваемой БД</strong>: vibe_landing</li>
+<li><strong>Имя пользователя</strong>: vibe_user</li>
+<li><strong>Пароль пользователя</strong>: придумайте на латинице (кириллица сломает строку подключения)</li>
+<li><strong>Размер кластера СУБД</strong>: 1</li>
+<li><strong>Superuser Access</strong>: не включайте</li>
+<li>Остальное не трогайте</li>
+</ul>
+<h3>Шаг 3. Скопируйте адрес базы</h3>
+<p>После создания БД откройте вкладку «Инфо». Найдите строку «Доменное имя для чтения/записи»:</p>
+<pre><code>amvera-ваш-логин-cnpg-имя-бд-rw</code></pre>
+<p>Например: amvera-realpepin-cnpg-vibe-landing-rw. Это внутренний адрес базы. Запишите — понадобится на шаге 7.</p>
+<p>Из всех данных собирается строка подключения DATABASE_URL:</p>
+<pre><code>Шаблон:  postgresql://ПОЛЬЗОВАТЕЛЬ:ПАРОЛЬ@ХОСТ:5432/ИМЯ_БД?schema=public
+Пример:  postgresql://vibe_user:my5ecretPass@amvera-realpepin-cnpg-vibe-landing-rw:5432/vibe_landing?schema=public</code></pre>
+<h3>Шаг 4. Создайте проект</h3>
+<p>В левом меню откройте «Приложения» -&gt; «Создать приложение» (тариф «Начальный»).</p>
+<h3>Шаг 5. Загрузите код через git</h3>
+<p>На шаге «Загрузка данных» выберите «Через git».</p>
+<p>Откройте терминал в папке проекта. Вы в правильном месте, если путь заканчивается на название проекта:</p>
+<pre><code>user@pc:~/vibe-landing-starter$</code></pre>
+<p>Если в проекте ещё нет git — инициализируйте:</p>
+<pre><code>touch public/.gitkeep
+git init &amp;&amp; git add -A &amp;&amp; git commit -m &quot;init&quot;</code></pre>
+<p>Скопируйте команду из интерфейса Amvera (кнопка «Скопировать») и выполните:</p>
+<pre><code>git remote add amvera &lt;URL из интерфейса Amvera&gt;
+git push amvera master</code></pre>
+<p>Пишите именно git push amvera master, а не просто git push — нужно явно указать, куда отправляем. Терминал спросит логин и пароль — введите данные от аккаунта Amvera.</p>
+<h3>Шаг 6. Конфигурация</h3>
+<p>Пропустите — Amvera автоматически найдёт Dockerfile и поймёт, как собирать проект.</p>
+<h3>Шаг 7. Настройте переменные окружения</h3>
+<p>В настройках проекта откройте «Переменные». Проще всего: создайте файл .env на своём компьютере и нажмите «Подгрузить .env»:</p>
+<pre><code>DATABASE_URL=postgresql://vibe_user:ВАШ_ПАРОЛЬ@ХОСТ-ИЗ-ШАГА-3:5432/vibe_landing?schema=public
+WEBHOOK_SECRET=случайная-строка
+TELEGRAM_BOT_TOKEN=токен-бота
+TELEGRAM_CHAT_ID=id-чата</code></pre>
+<h3>Как заполнить:</h3>
+<ul>
+<li>DATABASE_URL — подставьте пароль из шага 2 и хост из шага 3</li>
+<li>WEBHOOK_SECRET — любая случайная строка длиной 20+. Сгенерируйте на 1password.com/password-generator</li>
+<li>TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID — см. часть 5. Можно оставить пустыми — приложение будет работать без уведомлений</li>
+</ul>
+<p>У каждой переменной выберите этап «Запуск», отметьте «Это секрет» -&gt; Применить.</p>
+<h3>Шаг 8. Дождитесь запуска</h3>
+<p>Amvera соберёт и запустит проект (2–5 минут). В разделе «Логи» есть три вкладки:</p>
+<ul>
+<li>«Лог сборки» — как проект собирался (ошибки компиляции, зависимости)</li>
+<li>«Лог приложения» — что пишет само приложение после запуска</li>
+<li>«Лог системы» — служебные сообщения платформы</li>
+</ul>
+<p>Когда статус сменится на «Приложение запущено», откройте «Лог приложения», нажмите «Выполнить запрос». Ищите две строки:</p>
+<pre><code>All migrations have been successfully applied.   ← таблицы созданы
+✓ Ready in XXXms                                 ← приложение работает</code></pre>
+<p>Если обе есть — всё в порядке. Если статус «Выполняется сборка» и что-то пошло не так — смотрите «Лог сборки».</p>
+<p>Бывает, что статус зависает на «Приложение развёртывается», хотя в «Лог приложения» уже видно «Ready». Это нормально — платформа ещё проверяет здоровье контейнера. Сайт при этом уже может работать. Попробуйте открыть URL — если страница загружается, всё в порядке.</p>
+<h3>Шаг 9. Подключите домен</h3>
+<p>Откройте «Домены» -&gt; «Добавить домен»:</p>
+<ul>
+<li><strong>Тип домена</strong>: «Бесплатный домен Amvera» (адрес имя-проекта.amvera.io — хватит для демо)</li>
+<li><strong>Тип подключения</strong>: HTTPS</li>
+</ul>
+<p>Остальные поля оставьте пустыми.</p>
+<p>Браузер показывает «Подключение не защищено»? SSL-сертификат выпускается не мгновенно — подождите 3–5 минут.</p>
+<hr>
+<h3>Частые ошибки при деплое</h3>
+<table><thead><tr><th>Ошибка в логах</th><th>Причина</th><th>Решение</th></tr></thead><tbody>
+<tr><td>url is no longer supported</td><td>Версия Prisma CLI слишком новая</td><td>Попросите ИИ закрепить Prisma v6</td></tr>
+<tr><td>sh: prisma: not found</td><td>Prisma CLI не установлен</td><td>Попросите ИИ добавить установку в Docker</td></tr>
+<tr><td>permission denied 0.0.0.0:80</td><td>Порт 80 требует прав</td><td>Попросите ИИ убрать USER nextjs</td></tr>
+<tr><td>could not locate Query Engine</td><td>Нет сборки под Linux-контейнер</td><td>Попросите ИИ добавить binaryTargets</td></tr>
+<tr><td>no such file: /app/public</td><td>git не трекает пустые папки</td><td>touch public/.gitkeep &amp;&amp; git add .</td></tr>
+</tbody></table>
+<p>В каждом случае решение одно: опишите ИИ ошибку, и он поправит. Но полезно узнавать эти ошибки в лицо — вы сэкономите время на диагностику.</p>
+<h2>ПРОВЕРОЧНЫЕ ЗАДАНИЯ</h2>
+<hr>
+<h3>Тесты с одним правильным ответом</h3>
+<div class="question">
+<p class="q-text"><strong>Вопрос 1.</strong> Зачем полю consent (согласие) нужен тип Boolean, а не String?</p>
+<p class="opt">а) Boolean занимает меньше места в базе данных</p>
+<p class="opt">б) Согласие — «да» или «нет», Boolean точно отражает два допустимых значения</p>
+<p class="opt">в) Prisma не поддерживает String для чекбоксов</p>
+<p class="opt">г) Это требование закона о персональных данных</p>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ: б. Boolean допускает только true или false — ровно два состояния. Строковое поле примет любой текст: «maybe», «123», пустую строку. Тип данных — первая линия защиты от мусора.</p>
+</div></details></div>
+<hr class="q-sep">
+<div class="question">
+<p class="q-text"><strong>Вопрос 2.</strong> Внешний сервис прислал webhook с тем же idempotencyKey повторно. Что произойдёт?</p>
+<p class="opt">а) Создастся дубликат записи в базе данных</p>
+<p class="opt">б) Приложение вернёт ошибку 500 (внутренняя ошибка сервера)</p>
+<p class="opt">в) Приложение вернёт 200 OK, дубликат не создастся</p>
+<p class="opt">г) Приложение отклонит запрос с ошибкой 401 (неавторизован)</p>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ: в. Поле idempotencyKey помечено @unique — база не допустит двух записей с одинаковым ключом. Приложение ловит это и отвечает 200 OK: «получили, спасибо». Внешний сервис видит успех и прекращает повторы.</p>
+</div></details></div>
+<hr class="q-sep">
+<div class="question">
+<p class="q-text"><strong>Вопрос 3.</strong> Telegram API не отвечает в момент создания лида. Что произойдёт?</p>
+<p class="opt">а) Заявка не сохранится в базу данных</p>
+<p class="opt">б) Пользователь увидит сообщение об ошибке</p>
+<p class="opt">в) Заявка сохранится, уведомление не придёт</p>
+<p class="opt">г) Приложение будет повторять запрос к Telegram каждые 5 секунд</p>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ: в. Уведомление отправляется по принципу fire-and-forget: лид уже в базе, пользователь видит «Принято». Telegram — бонус, не обязательное условие.</p>
+</div></details></div>
+<hr class="q-sep">
+<div class="question">
+<p class="q-text"><strong>Вопрос 4.</strong> Зачем переменные окружения хранят отдельно от кода?</p>
+<p class="opt">а) Код работает быстрее без лишних строк</p>
+<p class="opt">б) Так проще менять настройки на сервере</p>
+<p class="opt">в) Чтобы пароли и токены не попали в git-репозиторий</p>
+<p class="opt">г) Это техническое ограничение Next.js</p>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ: в. Переменные содержат секреты: пароль базы, токен бота, ключи. Попадут в git — любой с доступом к репозиторию получит доступ к вашей базе и ботам.</p>
+</div></details></div>
+<hr>
+<h3>Тесты с несколькими правильными ответами</h3>
+<div class="question">
+<p class="q-text"><strong>Вопрос 5.</strong> Что верно про трекинг конверсий? (выберите все верные)</p>
+<p class="opt">а) Если сервер трекинга упал, страница покажет ошибку пользователю</p>
+<p class="opt">б) События хранятся в отдельной таблице, не вместе с лидами</p>
+<p class="opt">в) Тип события — произвольная строка, можно передать любой текст</p>
+<p class="opt">г) Ошибки трекинга не видны пользователю</p>
+<p class="opt">д) У таблицы событий есть индексы для быстрой выборки</p>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ: б, г, д.</p>
+<p>- а — неверно: ошибки тихо проглатываются, пользователь ничего не видит</p>
+<p>- б — верно: события — в таблице conversion_events, лиды — в leads</p>
+<p>- в — неверно: тип — enum из трёх значений, произвольный текст база отклонит</p>
+<p>- г — верно: принцип silent failure — трекинг вспомогательный</p>
+<p>- д — верно: индексы по типу и дате ускоряют аналитические запросы</p>
+</div></details></div>
+<hr class="q-sep">
+<div class="question">
+<p class="q-text"><strong>Вопрос 6.</strong> Какие события трекаются автоматически, без активного действия пользователя? (выберите все верные)</p>
+<p class="opt">а) landing_view</p>
+<p class="opt">б) cta_click</p>
+<p class="opt">в) lead_created</p>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ: а, в.</p>
+<p>- а — верно: срабатывает при открытии страницы, пользователь ничего не делает</p>
+<p>- б — неверно: срабатывает по клику на кнопку — активное действие</p>
+<p>- в — верно: записывается на сервере автоматически при сохранении лида</p>
+</div></details></div>
+<hr>
+<h3>Кейсы</h3>
+<div class="question">
+<p class="q-text"><strong>Вопрос 7.</strong> Маркетолог хочет добавить поле «город» в форму. В текущей модели данных такого поля нет. Что нужно сделать?</p>
+<p class="opt">а) Добавить поле в HTML-форму — база подхватит автоматически</p>
+<p class="opt">б) Добавить поле в модель данных и создать миграцию</p>
+<p class="opt">в) Вписать город прямо в базу через SQL</p>
+<p class="opt">г) Добавить город в переменные окружения</p>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ: б. База не «угадывает» новые поля. Нужно описать поле в модели, создать миграцию (чтобы в базе появилась новая колонка), и только потом форма сможет сохранять город. Вариант «а» приведёт к ошибке: сервер попытается записать поле, которого в базе нет.</p>
+</div></details></div>
+<hr class="q-sep">
+<div class="question">
+<p class="q-text"><strong>Вопрос 8.</strong> Вы забыли указать WEBHOOK_SECRET в переменных окружения. Что произойдёт при входящем webhook-запросе?</p>
+<p class="opt">а) Запрос пройдёт без проверки — секрет не задан, значит отключён</p>
+<p class="opt">б) Все запросы будут отклоняться с ошибкой 401</p>
+<p class="opt">в) Приложение упадёт с критической ошибкой</p>
+<p class="opt">г) Webhook сохранится, но без payload</p>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ: б. Приложение сравнивает секрет из заголовка с переменной окружения. Если переменная не задана, её значение — пустое. Секрет из заголовка (реальная строка) не совпадёт с пустым значением → 401 для всех запросов, включая легитимные.</p>
+</div></details></div>
+<hr class="q-sep">
+<div class="question">
+<p class="q-text"><strong>Вопрос 9.</strong> При отправке формы пользователь видит «Что-то пошло не так». В логах — ошибка подключения к базе. Что проверить в первую очередь?</p>
+<p class="opt">а) Правильность TELEGRAM_BOT_TOKEN</p>
+<p class="opt">б) Правильность DATABASE_URL в переменных окружения</p>
+<p class="opt">в) Наличие WEBHOOK_SECRET</p>
+<p class="opt">г) Версию Node.js на сервере</p>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ: б. Ошибка подключения к базе — это DATABASE_URL. Частые причины: опечатка в пароле, неправильный хост, кириллица в пароле. TELEGRAM_BOT_TOKEN и WEBHOOK_SECRET не влияют на сохранение лидов.</p>
+</div></details></div>
+<hr>
+<h3>Задания на соотнесение</h3>
+<div class="question">
+<p class="q-text"><strong>Вопрос 10.</strong> Соотнесите переменную окружения с её назначением.</p>
+<pre class="q-pre">Переменная:            Назначение:
+
+1. DATABASE_URL        А. Куда отправлять уведомления о заявках
+2. WEBHOOK_SECRET      Б. Адрес и пароль базы данных
+3. TELEGRAM_BOT_TOKEN  В. Проверка подлинности входящих webhook-запросов
+4. TELEGRAM_CHAT_ID    Г. Авторизация бота в Telegram API</pre>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ: 1-Б, 2-В, 3-Г, 4-А.</p>
+<p>- DATABASE_URL — всё для подключения к PostgreSQL: пользователь, пароль, адрес, имя базы</p>
+<p>- WEBHOOK_SECRET — пароль, который должен совпадать в заголовке входящего запроса</p>
+<p>- TELEGRAM_BOT_TOKEN — ключ от BotFather для отправки сообщений через API</p>
+<p>- TELEGRAM_CHAT_ID — идентификатор чата, куда бот шлёт уведомления</p>
+</div></details></div>
+<hr>
+<h3>Задания на распределение по категориям</h3>
+<div class="question">
+<p class="q-text"><strong>Вопрос 11.</strong> Распределите переменные: «секрет» или «обычная настройка».</p>
+<pre class="q-pre">DATABASE_URL, WEBHOOK_SECRET, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+
+Секрет                     Обычная настройка
+─────────                  ──────────────────</pre>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ:</p>
+<pre class="answer-pre">Секрет                     Обычная настройка
+─────────                  ──────────────────
+DATABASE_URL               TELEGRAM_CHAT_ID
+WEBHOOK_SECRET
+TELEGRAM_BOT_TOKEN</pre>
+<p>DATABASE_URL содержит пароль — секрет. WEBHOOK_SECRET — по определению. TELEGRAM_BOT_TOKEN — полный доступ к боту. TELEGRAM_CHAT_ID — просто число, без токена бесполезно.</p>
+</div></details></div>
+<hr class="q-sep">
+<div class="question">
+<p class="q-text"><strong>Вопрос 12.</strong> Распределите действия: «браузер» или «сервер».</p>
+<pre class="q-pre">Действия:
+- Трекинг landing_view
+- Сохранение лида в базу
+- Трекинг cta_click
+- Проверка секрета webhook
+- Отправка уведомления в Telegram
+- Отображение формы
+
+Браузер                    Сервер
+──────────────────         ──────</pre>
+<details class="answer-toggle"><summary>Показать ответ</summary>
+<div class="answer-content">
+<p>Ответ:</p>
+<pre class="answer-pre">Браузер                    Сервер
+──────────────────         ──────
+Трекинг landing_view       Сохранение лида в базу
+Трекинг cta_click          Проверка секрета webhook
+Отображение формы          Отправка уведомления в Telegram</pre>
+<p>Трекинг landing_view и cta_click инициируется в браузере. Форма рисуется в браузере. А сохранение лида, проверка webhook и Telegram — серверные операции с доступом к базе и внешним API.</p>
+</div></details></div>
+<h2>ИТОГИ</h2>
+<hr>
+<h3>Что вы разобрали</h3>
+<ol>
+<li>Структура — 5 секций, каждая со своей ролью в воронке</li>
+<li>Данные — модель лида с типами, ограничениями и автоматическими полями</li>
+<li>Аналитика — три события конверсии для измерения воронки</li>
+<li>Вебхуки — приём внешних событий с секретом и защитой от дубликатов</li>
+<li>Интеграции — Telegram-уведомления по принципу «отправил и забыл»</li>
+<li>Деплой — переменные окружения, Docker, Amvera Cloud</li>
+</ol>
+<hr>
+<h3>Главный навык: проверка, а не написание</h3>
+<p>Ваша роль в вайбкодинге — не писать код, а управлять результатом. Для каждой части лендинга у вас теперь есть три инструмента:</p>
+<ul>
+<li>Промпт — что попросить у ИИ, чтобы он сгенерировал правильно с первого раза</li>
+<li>Чек-лист — что проверить в ответе глазами</li>
+<li>Проверяющий — какие вопросы задать отдельному агенту, чтобы найти скрытые проблемы</li>
+</ul>
+<p>Третий инструмент — самый важный. ИИ, который написал код, смотрит на него через розовые очки. Он не будет сам ломать своё решение. Отдельный проверяющий — будет.</p>
+<hr>
+<h3>Проверка отказоустойчивости: сводный чек</h3>
+<p>Все части проекта работают вместе, но каждая должна быть спроектирована так, чтобы отказ одной не ломал остальные. Это называется graceful degradation — плавная деградация.</p>
+<p>Чтобы проверить это свойство у сгенерированного проекта, откройте отдельный чат и вставьте весь код. Задайте три вопроса:</p>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p12">«Telegram API недоступен. Пользователь отправляет форму. Что он увидит? Сохранится ли лид?»</blockquote><button class="copy-btn small" data-target="p12">Копировать промпт</button></div>
+<p>Правильный ответ: пользователь видит «Принято», лид в базе.</p>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p13">«Сервер /api/events возвращает 500. Посетитель открывает лендинг и кликает CTA. Что произойдёт?»</blockquote><button class="copy-btn small" data-target="p13">Копировать промпт</button></div>
+<p>Правильный ответ: страница работает как обычно, просто события не запишутся.</p>
+<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p14">«Внешний сервис отправил webhook с idempotencyKey=&quot;test-1&quot; три раза подряд. Сколько записей в базе?»</blockquote><button class="copy-btn small" data-target="p14">Копировать промпт</button></div>
+<p>Правильный ответ: одна запись.</p>
+<p>Если хотя бы один ответ другой — система не отказоустойчива. Покажите ответ проверяющего ИИ-автору и попросите исправить конкретную проблему.</p>
+<hr>
+<h3>Зачем это всё</h3>
+<p>Graceful degradation — не техническая мелочь. Это принцип, который отличает рабочий продукт от хрупкой поделки. ИИ умеет генерировать код, который «работает на демо». Но код, который работает когда что-то идёт не так — это уже ваша ответственность. Именно для этого нужны проверяющий, чек-листы и конкретные вопросы из этого урока.</p>
+<script>
+document.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('copy-btn')) return;
+    var el = document.getElementById(e.target.dataset.target);
+    if (!el) return;
+    navigator.clipboard.writeText(el.textContent).then(function() {
+        var btn = e.target, orig = btn.textContent;
+        btn.textContent = 'Скопировано!'; btn.classList.add('copied');
+        setTimeout(function() { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+    });
+});
+</script>
+</body>
+</html>
