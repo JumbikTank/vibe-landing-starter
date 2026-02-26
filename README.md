@@ -150,7 +150,7 @@ src/
 │   ├── sections/             # Hero, Proof, Benefits, Faq, Cta
 │   ├── ui/                   # Aceternity UI компоненты
 │   ├── LeadForm.tsx          # форма с useActionState
-│   └── FaqItem.tsx           # аккордеон
+│   └── FaqItem.tsx           # раскрывающийся вопрос-ответ
 ├── types/                    # TypeScript типы (content, api, form)
 ├── lib/                      # prisma, telegram, tracking
 └── content/landing.ts        # все тексты лендинга (ru)
