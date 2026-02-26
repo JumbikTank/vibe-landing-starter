@@ -40,6 +40,8 @@ hr { border: none; border-top: 1px solid var(--ya-border); margin: 24px 0; }
 p { margin: 8px 0; }
 ul, ol { margin: 8px 0; padding-left: 24px; }
 li { margin: 4px 0; }
+a { color: inherit; text-decoration: underline; text-decoration-color: var(--ya-yellow); text-underline-offset: 2px; transition: text-decoration-color 0.2s; }
+a:hover { text-decoration-color: var(--ya-black); }
 blockquote { background: var(--ya-gray); border-left: 3px solid var(--ya-yellow); padding: 12px 16px; margin: 12px 0; font-style: italic; font-size: 14px; color: #333; }
 
 /* Code */
@@ -256,7 +258,7 @@ hr.q-sep { border-top-color: #333; }
 <p>В этом уроке вы будете работать с ИИ-ассистентом в режиме диалога: описывать задачу текстом, получать код, проверять результат. Код писать руками не нужно — но нужно уметь запускать команды в терминале и общаться с ИИ.</p>
 <p>Перед началом убедитесь, что у вас есть:</p>
 <div class="rich-item"><div class="rich-num">1</div><div class="rich-body"><strong>ИИ-агент</strong><p>Вам нужен ИИ, который умеет создавать и редактировать файлы в проекте. Вы описываете задачу словами — он пишет код.</p>
-<table><thead><tr><th>Инструмент</th><th>Бесплатно</th><th>VPN</th><th>Где взять</th></tr></thead><tbody><tr><td>Antigravity</td><td>Щедрая квота</td><td>Да</td><td><a href="https://antigravity.ai" target="_blank">antigravity.ai</a></td></tr><tr><td>Cursor</td><td>Есть бесплатный</td><td>Да</td><td><a href="https://cursor.com" target="_blank">cursor.com</a></td></tr><tr><td>Windsurf</td><td>Есть бесплатный</td><td>Да</td><td><a href="https://windsurf.com" target="_blank">windsurf.com</a></td></tr><tr><td>Claude Code</td><td>С подпиской</td><td>Да</td><td><a href="https://claude.ai" target="_blank">claude.ai</a></td></tr><tr><td>Perplexity</td><td>Бесплатный</td><td>Нет</td><td><a href="https://perplexity.ai" target="_blank">perplexity.ai</a></td></tr></tbody></table>
+<table><thead><tr><th>Инструмент</th><th>Бесплатно</th><th>VPN</th><th>Где взять</th></tr></thead><tbody><tr><td>Antigravity</td><td>Щедрая квота</td><td>Да</td><td><a href="https://app.antigravity.dev" target="_blank">antigravity.dev</a></td></tr><tr><td>Cursor</td><td>Есть бесплатный</td><td>Да</td><td><a href="https://www.cursor.com" target="_blank">cursor.com</a></td></tr><tr><td>Windsurf</td><td>Есть бесплатный</td><td>Да</td><td><a href="https://windsurf.com" target="_blank">windsurf.com</a></td></tr><tr><td>Claude Code</td><td>С подпиской</td><td>Да</td><td><a href="https://claude.ai" target="_blank">claude.ai</a></td></tr><tr><td>Perplexity</td><td>Бесплатный</td><td>Нет</td><td><a href="https://www.perplexity.ai" target="_blank">perplexity.ai</a></td></tr></tbody></table>
 <p>Все инструменты, кроме Perplexity, требуют VPN для работы из РФ. Perplexity работает без VPN, но код придётся копировать вручную. Урок не привязан к конкретному инструменту — промпты универсальны.</p>
 <p>Рекомендация (если есть VPN): Antigravity — самая щедрая бесплатная квота, хватит на весь проект.</p></div></div>
 <div class="rich-item"><div class="rich-num">2</div><div class="rich-body"><strong>Два независимых диалога</strong><p>ИИ-кодер — пишет код. ИИ-проверяющий — ищет в нём проблемы.</p>
