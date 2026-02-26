@@ -238,7 +238,7 @@ hr.q-sep { border-top-color: #333; }
 <table><thead><tr><th>Инструмент</th><th>Бесплатно</th><th>VPN</th><th>Где взять</th></tr></thead><tbody><tr><td>Antigravity</td><td>Щедрая квота</td><td>Да</td><td>antigravity.ai</td></tr><tr><td>Cursor</td><td>Есть бесплатный</td><td>Да</td><td>cursor.com</td></tr><tr><td>Windsurf</td><td>Есть бесплатный</td><td>Да</td><td>windsurf.com</td></tr><tr><td>Claude Code</td><td>С подпиской</td><td>Да</td><td>claude.ai</td></tr><tr><td>Perplexity</td><td>Бесплатный</td><td>Нет</td><td>perplexity.ai</td></tr></tbody></table>
 <p>Все инструменты, кроме Perplexity, требуют VPN для работы из РФ. Perplexity работает без VPN, но код придётся копировать вручную. Урок не привязан к конкретному инструменту — промпты универсальны.</p>
 <p>Рекомендация (если есть VPN): Antigravity — самая щедрая бесплатная квота, хватит на весь проект.</p></div></div>
-<div class="rich-item"><div class="rich-num">2</div><div class="rich-body"><strong>Два независимых диалога</strong><p>Первый чат — пишет код. Второй — проверяет.</p>
+<div class="rich-item"><div class="rich-num">2</div><div class="rich-body"><strong>Два независимых диалога</strong><p>Кодер — пишет код. Проверяющий — ищет в нём проблемы.</p>
 <p>Зачем: ИИ, который написал код, не будет искать в нём проблемы. Спросите «всё ли ок?» — он скажет «да». Даже если нет. Он защищает своё решение. Поэтому проверять нужно в отдельном диалоге — тот ИИ код не писал и не будет его выгораживать.</p>
 <p>Откройте два чата в одном инструменте: нажмите «+» (новый диалог). Два диалога не видят друг друга — это важно.</p></div></div>
 <div class="rich-item"><div class="rich-num">3</div><div class="rich-body"><strong>Аккаунты для деплоя</strong><p>Зарегистрируйтесь на amvera.ru — это хостинг, на котором вы опубликуете проект. Аккаунт в Telegram у вас уже есть — через него будут приходить уведомления о заявках.</p></div></div>
@@ -262,8 +262,8 @@ hr.q-sep { border-top-color: #333; }
 </ol>
 <p>Стек проекта: Next.js, TypeScript, Tailwind CSS, Prisma + PostgreSQL. Названия технологий знать не обязательно — ИИ подберёт и настроит их сам. Вам важно понимать, зачем каждая часть нужна и как они связаны.</p>
 <hr>
-<h3>Как настроить второй чат (проверяющий): готовый промпт</h3>
-<p>Первый чат генерирует код — ему не нужна особая настройка. Второй чат проверяет. Чтобы он работал жёстко и не «жалел» чужой код, начните диалог с такого промпта:</p>
+<h3>Как настроить проверяющего: готовый промпт</h3>
+<p>Кодеру не нужна особая настройка. А вот проверяющий должен работать жёстко и не «жалеть» чужой код. Начните диалог с такого промпта:</p>
 <div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОМПТ ДЛЯ ВТОРОГО ЧАТА (ПРОВЕРЯЮЩЕГО)</span><button class="copy-btn" data-target="p2">Копировать</button></div><pre class="prompt-body" id="p2">Ты — придирчивый проверяющий. Твоя задача — находить
 проблемы, а не хвалить. Для каждого вопроса, который
 я задам:
@@ -278,16 +278,16 @@ hr.q-sep { border-top-color: #333; }
 <p>После этого задавайте вопросы из блоков «Как проверить через ИИ» в уроке. Если проверяющий просит показать код или файл — скопируйте из рабочего чата.</p>
 <h3>Рабочий цикл выглядит так:</h3>
 <div class="wf-diagram">
-  <div class="wf-step"><span class="wf-num">1</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat1">Первый чат</span><span class="wf-what">промпт с задачей</span></div>
-  <div class="wf-step"><span class="wf-num">2</span><span class="wf-from chat1">Первый чат</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">сгенерированный код</span></div>
-  <div class="wf-step"><span class="wf-num">3</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat2">Второй чат</span><span class="wf-what">вопрос на проверку</span></div>
-  <div class="wf-step"><span class="wf-num">4</span><span class="wf-from chat2">Второй чат</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">найденная проблема</span></div>
-  <div class="wf-step"><span class="wf-num">5</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat1">Первый чат</span><span class="wf-what">&laquo;исправь&raquo; + описание проблемы</span></div>
-  <div class="wf-step"><span class="wf-num">6</span><span class="wf-from chat1">Первый чат</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">исправленный код</span></div>
-  <div class="wf-step"><span class="wf-num">7</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat2">Второй чат</span><span class="wf-what">проверить исправление</span></div>
-  <div class="wf-step"><span class="wf-num">8</span><span class="wf-from chat2">Второй чат</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">&laquo;ок&raquo;</span></div>
+  <div class="wf-step"><span class="wf-num">1</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat1">Кодер</span><span class="wf-what">промпт с задачей</span></div>
+  <div class="wf-step"><span class="wf-num">2</span><span class="wf-from chat1">Кодер</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">сгенерированный код</span></div>
+  <div class="wf-step"><span class="wf-num">3</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat2">Проверяющий</span><span class="wf-what">вопрос на проверку</span></div>
+  <div class="wf-step"><span class="wf-num">4</span><span class="wf-from chat2">Проверяющий</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">найденная проблема</span></div>
+  <div class="wf-step"><span class="wf-num">5</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat1">Кодер</span><span class="wf-what">&laquo;исправь&raquo; + описание проблемы</span></div>
+  <div class="wf-step"><span class="wf-num">6</span><span class="wf-from chat1">Кодер</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">исправленный код</span></div>
+  <div class="wf-step"><span class="wf-num">7</span><span class="wf-from you">Вы</span><span class="wf-arrow">&rarr;</span><span class="wf-to chat2">Проверяющий</span><span class="wf-what">проверить исправление</span></div>
+  <div class="wf-step"><span class="wf-num">8</span><span class="wf-from chat2">Проверяющий</span><span class="wf-arrow">&rarr;</span><span class="wf-to you">Вы</span><span class="wf-what">&laquo;ок&raquo;</span></div>
 </div>
-<p>Вы — посередине. Первый чат генерирует, второй ломает, вы принимаете решение. Не нужно разбираться в каждой строке кода — нужно задавать правильные вопросы правильному чату.</p>
+<p>Вы — посередине. Кодер генерирует, проверяющий ломает, вы принимаете решение.</p>
 <h2>ЧАСТЬ 1. СТРУКТУРА ЛЕНДИНГА</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как собирать лендинг из 5 обязательных секций (Hero / Proof / Benefits / FAQ / CTA) с логичной навигацией и читаемой иерархией.</div>
 <hr>
@@ -398,7 +398,7 @@ hr.q-sep { border-top-color: #333; }
 <h3>Как проверить через ИИ</h3>
 <p>Откройте отдельный чат (проверяющий). Покажите ему модель данных и серверную функцию сохранения лида. Задайте вопрос:</p>
 <div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p5">Копировать</button></div><pre class="prompt-body" id="p5">Я отправляю POST-запрос напрямую через curl, минуя браузер. Поле name — пустая строка, consent — false. Пройдёт ли запись в базу? Покажи путь выполнения по шагам.</pre></div>
-<p>Правильный ответ: сервер отклонит запрос ещё до обращения к базе. Если проверяющий говорит, что запись пройдёт — валидация только на клиенте, а на сервере её нет. Попросите ИИ-автора добавить серверную проверку.</p>
+<p>Правильный ответ: сервер отклонит запрос ещё до обращения к базе. Если проверяющий говорит, что запись пройдёт — валидация только на клиенте, а на сервере её нет. Попросите кодера добавить серверную проверку.</p>
 <h2>ЧАСТЬ 3. СОБЫТИЙНОСТЬ И АУДИТ</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как инструментировать продукт событиями конверсии (landing_view, cta_click, lead_created) и писать их в БД.</div>
 <hr>
@@ -452,7 +452,7 @@ hr.q-sep { border-top-color: #333; }
 <h3>Как проверить через ИИ</h3>
 <p>Покажите проверяющему код трекинга и спросите:</p>
 <div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p7">Копировать</button></div><pre class="prompt-body" id="p7">Сервер /api/events лежит и возвращает 500. Пользователь открывает лендинг и кликает CTA. Что он увидит? Будет ли страница работать?</pre></div>
-<p>Правильный ответ: страница работает как обычно, пользователь ничего не замечает. Если проверяющий говорит «пользователь увидит ошибку» или «страница зависнет» — ошибки трекинга не обрабатываются. Попросите ИИ-автора обернуть вызовы в try/catch с пустым блоком.</p>
+<p>Правильный ответ: страница работает как обычно, пользователь ничего не замечает. Если проверяющий говорит «пользователь увидит ошибку» или «страница зависнет» — ошибки трекинга не обрабатываются. Попросите кодера обернуть вызовы в try/catch с пустым блоком.</p>
 <h2>ЧАСТЬ 4. WEBHOOK INBOX + БЕЗОПАСНОСТЬ + ИДЕМПОТЕНТНОСТЬ</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как обрабатывать входящие события и логировать их в event log с сохранением полезного payload.</div>
 <hr>
@@ -530,13 +530,13 @@ hr.q-sep { border-top-color: #333; }
 </ul>
 <hr>
 <h3>Как проверить через ИИ</h3>
-<p>Webhook — самая сложная часть проекта. ИИ-автор почти наверняка скажет «всё реализовано». Не верьте на слово. Откройте проверяющего и задайте три вопроса:</p>
+<p>Webhook — самая сложная часть проекта. Кодер почти наверняка скажет «всё реализовано». Не верьте на слово. Откройте проверяющего и задайте три вопроса:</p>
 <div class="rich-item"><div class="rich-num">1</div><div class="rich-body"><strong>Порядок проверок:</strong><p>«Я отправляю POST /api/webhook без заголовка x-webhook-secret, но с валидным телом. Запишутся ли данные в базу? Покажи строку кода, где происходит проверка секрета, и строку, где происходит запись.»</p>
 <p>Проверка секрета ДОЛЖНА быть раньше записи в базу. Если нет — данные злоумышленника попадут в базу до проверки.</p></div></div>
 <div class="rich-item"><div class="rich-num">2</div><div class="rich-body"><strong>Идемпотентность:</strong><p>«Я отправляю два одинаковых запроса с idempotencyKey = &quot;test-1&quot;. Первый вернул 201. Что вернёт второй? Сколько записей будет в базе?»</p>
 <p>Правильный ответ: второй запрос — 200 OK, записей — одна. Если проверяющий говорит «500» или «две записи» — защита не работает.</p></div></div>
 <div class="rich-item"><div class="rich-num">3</div><div class="rich-body"><strong>Безопасность:</strong><p>«Ты — аудитор безопасности. Какие способы обойти проверку секрета ты видишь в этом коде?»</p>
-<p>Хороший код не даёт способов обхода. Если проверяющий находит лазейки — покажите его ответ ИИ-автору и попросите исправить.</p></div></div>
+<p>Хороший код не даёт способов обхода. Если проверяющий находит лазейки — покажите его ответ кодеру и попросите исправить.</p></div></div>
 <h2>ЧАСТЬ 5. ИНТЕГРАЦИИ: TELEGRAM-УВЕДОМЛЕНИЯ</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как интегрировать отправку уведомления в Telegram при lead_created, с минимальной, но полезной структурой сообщения.</div>
 <hr>
@@ -915,7 +915,7 @@ TELEGRAM_BOT_TOKEN</pre>
 <p>Правильный ответ: страница работает как обычно, просто события не запишутся.</p>
 <div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p14">Копировать</button></div><pre class="prompt-body" id="p14">Внешний сервис отправил webhook с idempotencyKey="test-1" три раза подряд. Сколько записей в базе?</pre></div>
 <p>Правильный ответ: одна запись.</p>
-<p>Если хотя бы один ответ другой — система не отказоустойчива. Покажите ответ проверяющего ИИ-автору и попросите исправить конкретную проблему.</p>
+<p>Если хотя бы один ответ другой — система не отказоустойчива. Покажите ответ проверяющего кодеру и попросите исправить конкретную проблему.</p>
 <hr>
 <h3>Зачем это всё</h3>
 <p>Graceful degradation — не техническая мелочь. Это принцип, который отличает рабочий продукт от хрупкой поделки. ИИ умеет генерировать код, который «работает на демо». Но код, который работает когда что-то идёт не так — это уже ваша ответственность. Именно для этого нужны проверяющий, чек-листы и конкретные вопросы из этого урока.</p>
