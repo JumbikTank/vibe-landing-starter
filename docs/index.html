@@ -15,7 +15,7 @@ h2 { font-size: 22px; font-weight: 700; background: var(--ya-yellow); padding: 1
 h3 { font-size: 17px; font-weight: 600; margin: 28px 0 8px; }
 
 .subtitle { font-size: 16px; color: #666; margin: 0 0 32px; }
-.edu-result { font-size: 13.5px; color: #555; font-style: italic; padding: 8px 16px; background: var(--ya-gray); border-left: 3px solid var(--ya-yellow); border-radius: 0 6px 6px 0; margin: 0 0 16px; }
+.edu-result { font-size: 13.5px; color: #4A148C; font-style: italic; padding: 8px 16px; background: #F3E5F5; border-left: 3px solid #9C27B0; border-radius: 0 6px 6px 0; margin: 0 0 16px; }
 
 /* Separators */
 hr { border: none; border-top: 1px solid var(--ya-border); margin: 24px 0; }
@@ -50,15 +50,13 @@ tr:nth-child(even) td { background: #FAFAFA; }
 .prompt-title { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
 .prompt-body { font-family: 'JetBrains Mono','Fira Code','Consolas',monospace; font-size: 13px; line-height: 1.5; white-space: pre-wrap; margin: 0; color: #333; }
 
-/* Inline prompts with copy */
-.inline-prompt-wrap { position: relative; margin: 12px 0; }
-.inline-prompt { background: var(--ya-gray); border-left: 3px solid var(--ya-yellow); padding: 12px 16px; margin: 0; font-style: italic; font-size: 14px; color: #333; }
+/* Inline prompts - deprecated, using prompt-box instead */
 
 /* Copy button */
 .copy-btn { background: var(--ya-black); color: #FFF; border: none; padding: 6px 14px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
 .copy-btn:hover { background: #444; }
 .copy-btn:active { background: var(--ya-yellow); color: var(--ya-black); }
-.copy-btn.small { margin-top: 6px; display: inline-block; }
+.copy-btn.small { margin-top: 6px; display: inline-block; } /* legacy, kept for compat */
 .copy-btn.copied { background: var(--ya-green); }
 
 /* Info box */
@@ -253,7 +251,7 @@ hr.q-sep { border: none; border-top: 1px dashed #DDD; margin: 16px 0; }
 </ol>
 <hr>
 <h3>Промпт-подсказка</h3>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p3">«Создай лендинг из 5 секций: Hero с заголовком и кнопкой CTA, Proof с 6 цифровыми метриками, Benefits с 4 карточками преимуществ, FAQ с 5 раскрывающимися вопросами, CTA с формой (имя + контакт + чекбокс согласия). Каждую секцию сделай отдельным компонентом. Весь текст вынеси в отдельный файл — не хардкодь в компонентах. Приложение должно слушать порт 80.»</blockquote><button class="copy-btn small" data-target="p3">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОМПТ</span><button class="copy-btn" data-target="p3">Копировать</button></div><pre class="prompt-body" id="p3">Создай лендинг из 5 секций: Hero с заголовком и кнопкой CTA, Proof с 6 цифровыми метриками, Benefits с 4 карточками преимуществ, FAQ с 5 раскрывающимися вопросами, CTA с формой (имя + контакт + чекбокс согласия). Каждую секцию сделай отдельным компонентом. Весь текст вынеси в отдельный файл — не хардкодь в компонентах. Приложение должно слушать порт 80.</pre></div>
 <hr>
 <h3>Что проверить в ответе ИИ / скинуть проверяющему агенту</h3>
 <ul class="checklist">
@@ -315,7 +313,7 @@ hr.q-sep { border: none; border-top: 1px dashed #DDD; margin: 16px 0; }
 <p>Telegram вызывается «на автомате» — если мессенджер не ответил, лид всё равно сохранён. Подробнее — в части 5.</p>
 <hr>
 <h3>Промпт-подсказка</h3>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p4">«Добавь форму сбора лидов. Поля: имя (до 200 символов), контакт (до 300), чекбокс согласия на обработку данных. Сохраняй в PostgreSQL через Prisma. Автоматически генерируй ID и дату создания. При сохранении — валидируй все поля на сервере (не только на клиенте). Создай миграцию.»</blockquote><button class="copy-btn small" data-target="p4">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОМПТ</span><button class="copy-btn" data-target="p4">Копировать</button></div><pre class="prompt-body" id="p4">Добавь форму сбора лидов. Поля: имя (до 200 символов), контакт (до 300), чекбокс согласия на обработку данных. Сохраняй в PostgreSQL через Prisma. Автоматически генерируй ID и дату создания. При сохранении — валидируй все поля на сервере (не только на клиенте). Создай миграцию.</pre></div>
 <hr>
 <h3>Что проверить в ответе ИИ / скинуть проверяющему агенту</h3>
 <ul class="checklist">
@@ -336,7 +334,7 @@ hr.q-sep { border: none; border-top: 1px dashed #DDD; margin: 16px 0; }
 <hr>
 <h3>Как проверить через ИИ</h3>
 <p>Откройте отдельный чат (проверяющий). Покажите ему модель данных и серверную функцию сохранения лида. Задайте вопрос:</p>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p5">«Я отправляю POST-запрос напрямую через curl, минуя браузер. Поле name — пустая строка, consent — false. Пройдёт ли запись в базу? Покажи путь выполнения по шагам.»</blockquote><button class="copy-btn small" data-target="p5">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p5">Копировать</button></div><pre class="prompt-body" id="p5">Я отправляю POST-запрос напрямую через curl, минуя браузер. Поле name — пустая строка, consent — false. Пройдёт ли запись в базу? Покажи путь выполнения по шагам.</pre></div>
 <p>Правильный ответ: сервер отклонит запрос ещё до обращения к базе. Если проверяющий говорит, что запись пройдёт — валидация только на клиенте, а на сервере её нет. Попросите ИИ-автора добавить серверную проверку.</p>
 <h2>ЧАСТЬ 3. СОБЫТИЙНОСТЬ И АУДИТ</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как инструментировать продукт событиями конверсии (landing_view, cta_click, lead_created) и писать их в БД.</div>
@@ -370,7 +368,7 @@ hr.q-sep { border: none; border-top: 1px dashed #DDD; margin: 16px 0; }
 <p>Аналогия: камера видеонаблюдения в магазине. Если камера сломалась, магазин не закрывается — покупатели продолжают покупать. Просто этот момент не записан.</p>
 <hr>
 <h3>Промпт-подсказка</h3>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p6">«Добавь трекинг конверсий. Три события: landing_view (при открытии страницы), cta_click (при клике на CTA-кнопку), lead_created (при сохранении лида). Тип события — enum, не строка. Храни в отдельной таблице conversion_events с индексами по типу и дате. Если трекинг упал — страница должна работать без ошибок, лови исключения (то есть оборачивай вызов в try/catch, чтобы ошибка трекинга не сломала основную функцию).»</blockquote><button class="copy-btn small" data-target="p6">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОМПТ</span><button class="copy-btn" data-target="p6">Копировать</button></div><pre class="prompt-body" id="p6">Добавь трекинг конверсий. Три события: landing_view (при открытии страницы), cta_click (при клике на CTA-кнопку), lead_created (при сохранении лида). Тип события — enum, не строка. Храни в отдельной таблице conversion_events с индексами по типу и дате. Если трекинг упал — страница должна работать без ошибок, лови исключения (то есть оборачивай вызов в try/catch, чтобы ошибка трекинга не сломала основную функцию).</pre></div>
 <hr>
 <h3>Что проверить в ответе ИИ / скинуть проверяющему агенту</h3>
 <ul class="checklist">
@@ -390,7 +388,7 @@ hr.q-sep { border: none; border-top: 1px dashed #DDD; margin: 16px 0; }
 <hr>
 <h3>Как проверить через ИИ</h3>
 <p>Покажите проверяющему код трекинга и спросите:</p>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p7">«Сервер /api/events лежит и возвращает 500. Пользователь открывает лендинг и кликает CTA. Что он увидит? Будет ли страница работать?»</blockquote><button class="copy-btn small" data-target="p7">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p7">Копировать</button></div><pre class="prompt-body" id="p7">Сервер /api/events лежит и возвращает 500. Пользователь открывает лендинг и кликает CTA. Что он увидит? Будет ли страница работать?</pre></div>
 <p>Правильный ответ: страница работает как обычно, пользователь ничего не замечает. Если проверяющий говорит «пользователь увидит ошибку» или «страница зависнет» — ошибки трекинга не обрабатываются. Попросите ИИ-автора обернуть вызовы в try/catch с пустым блоком.</p>
 <h2>ЧАСТЬ 4. WEBHOOK INBOX + БЕЗОПАСНОСТЬ + ИДЕМПОТЕНТНОСТЬ</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как обрабатывать входящие события и логировать их в event log с сохранением полезного payload.</div>
@@ -450,7 +448,7 @@ hr.q-sep { border: none; border-top: 1px dashed #DDD; margin: 16px 0; }
 <p>@unique на idempotencyKey — это и есть защита от дубликатов. Одна аннотация в схеме, а решает целый класс проблем.</p>
 <hr>
 <h3>Промпт-подсказка</h3>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p8">«Создай webhook-эндпоинт POST /api/webhook. Три проверки: 1) Секрет из заголовка x-webhook-secret совпадает с переменной окружения WEBHOOK_SECRET — иначе 401. 2) В теле обязательны idempotencyKey, eventType, payload — иначе 400. 3) idempotencyKey уникален в базе — при дубликате возвращай 200 (не 500!). Храни в таблице webhook_events.»</blockquote><button class="copy-btn small" data-target="p8">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОМПТ</span><button class="copy-btn" data-target="p8">Копировать</button></div><pre class="prompt-body" id="p8">Создай webhook-эндпоинт POST /api/webhook. Три проверки: 1) Секрет из заголовка x-webhook-secret совпадает с переменной окружения WEBHOOK_SECRET — иначе 401. 2) В теле обязательны idempotencyKey, eventType, payload — иначе 400. 3) idempotencyKey уникален в базе — при дубликате возвращай 200 (не 500!). Храни в таблице webhook_events.</pre></div>
 <hr>
 <h3>Что проверить в ответе ИИ / скинуть проверяющему агенту</h3>
 <ul class="checklist">
@@ -517,7 +515,7 @@ hr.q-sep { border: none; border-top: 1px dashed #DDD; margin: 16px 0; }
 <p>Graceful degradation (плавная деградация). Если TELEGRAM_BOT_TOKEN не указан в настройках, приложение не пытается отправить — просто пропускает этот шаг. Лендинг работает полноценно без Telegram. Можно сначала задеплоить, а бота настроить позже.</p>
 <hr>
 <h3>Промпт-подсказка</h3>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p9">«При создании лида отправляй уведомление в Telegram. Используй Telegram Bot API (метод sendMessage). Токен и chat_id бери из переменных окружения. Если переменные не заданы — пропускай отправку без ошибки. Отправляй параллельно, не блокируй ответ пользователю. Если Telegram не ответил — молча проглоти ошибку, лид уже сохранён.»</blockquote><button class="copy-btn small" data-target="p9">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОМПТ</span><button class="copy-btn" data-target="p9">Копировать</button></div><pre class="prompt-body" id="p9">При создании лида отправляй уведомление в Telegram. Используй Telegram Bot API (метод sendMessage). Токен и chat_id бери из переменных окружения. Если переменные не заданы — пропускай отправку без ошибки. Отправляй параллельно, не блокируй ответ пользователю. Если Telegram не ответил — молча проглоти ошибку, лид уже сохранён.</pre></div>
 <hr>
 <h3>Что проверить в ответе ИИ / скинуть проверяющему агенту</h3>
 <ul class="checklist">
@@ -536,10 +534,10 @@ hr.q-sep { border: none; border-top: 1px dashed #DDD; margin: 16px 0; }
 <hr>
 <h3>Как проверить через ИИ</h3>
 <p>Покажите проверяющему серверную функцию создания лида и задайте вопрос:</p>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p10">«Telegram API не отвечает 30 секунд. Пользователь нажал &quot;Отправить&quot;. Опиши по шагам, что произойдёт. Когда именно пользователь увидит ответ — до или после ответа Telegram?»</blockquote><button class="copy-btn small" data-target="p10">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p10">Копировать</button></div><pre class="prompt-body" id="p10">Telegram API не отвечает 30 секунд. Пользователь нажал "Отправить". Опиши по шагам, что произойдёт. Когда именно пользователь увидит ответ — до или после ответа Telegram?</pre></div>
 <p>Правильный ответ: пользователь увидит «Принято» почти мгновенно, потому что Telegram вызывается асинхронно и без ожидания результата. Если проверяющий говорит «пользователь будет ждать 30 секунд» — fire-and-forget не реализован, отправка блокирующая.</p>
 <h3>Ещё один вопрос:</h3>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p11">«TELEGRAM_BOT_TOKEN не задан в переменных окружения. Что произойдёт при создании лида? Приложение упадёт, покажет ошибку или проигнорирует?»</blockquote><button class="copy-btn small" data-target="p11">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p11">Копировать</button></div><pre class="prompt-body" id="p11">TELEGRAM_BOT_TOKEN не задан в переменных окружения. Что произойдёт при создании лида? Приложение упадёт, покажет ошибку или проигнорирует?</pre></div>
 <p>Правильный ответ: проигнорирует. Если проверяющий говорит «ошибка» — нет проверки наличия токена.</p>
 <h2>ЧАСТЬ 6. ДЕПЛОЙ И ИНФРАСТРУКТУРА</h2>
 <div class="edu-result">Образовательный результат: вы понимаете, как деплоить приложение и предоставлять живой URL; конфигурировать переменные окружения (DB_URL, TG_TOKEN, WEBHOOK_SECRET и т.д.).</div>
@@ -848,11 +846,11 @@ TELEGRAM_BOT_TOKEN</pre>
 <h3>Проверка отказоустойчивости: сводный чек</h3>
 <p>Все части проекта работают вместе, но каждая должна быть спроектирована так, чтобы отказ одной не ломал остальные. Это называется graceful degradation — плавная деградация.</p>
 <p>Чтобы проверить это свойство у сгенерированного проекта, откройте отдельный чат и вставьте весь код. Задайте три вопроса:</p>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p12">«Telegram API недоступен. Пользователь отправляет форму. Что он увидит? Сохранится ли лид?»</blockquote><button class="copy-btn small" data-target="p12">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p12">Копировать</button></div><pre class="prompt-body" id="p12">Telegram API недоступен. Пользователь отправляет форму. Что он увидит? Сохранится ли лид?</pre></div>
 <p>Правильный ответ: пользователь видит «Принято», лид в базе.</p>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p13">«Сервер /api/events возвращает 500. Посетитель открывает лендинг и кликает CTA. Что произойдёт?»</blockquote><button class="copy-btn small" data-target="p13">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p13">Копировать</button></div><pre class="prompt-body" id="p13">Сервер /api/events возвращает 500. Посетитель открывает лендинг и кликает CTA. Что произойдёт?</pre></div>
 <p>Правильный ответ: страница работает как обычно, просто события не запишутся.</p>
-<div class="inline-prompt-wrap"><blockquote class="inline-prompt" id="p14">«Внешний сервис отправил webhook с idempotencyKey=&quot;test-1&quot; три раза подряд. Сколько записей в базе?»</blockquote><button class="copy-btn small" data-target="p14">Копировать промпт</button></div>
+<div class="prompt-box"><div class="prompt-header"><span class="prompt-title">ПРОВЕРКА</span><button class="copy-btn" data-target="p14">Копировать</button></div><pre class="prompt-body" id="p14">Внешний сервис отправил webhook с idempotencyKey="test-1" три раза подряд. Сколько записей в базе?</pre></div>
 <p>Правильный ответ: одна запись.</p>
 <p>Если хотя бы один ответ другой — система не отказоустойчива. Покажите ответ проверяющего ИИ-автору и попросите исправить конкретную проблему.</p>
 <hr>
