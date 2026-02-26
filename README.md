@@ -105,7 +105,7 @@ curl -X POST http://localhost:3000/api/events \
 
 ### POST /api/webhook
 
-Входящий эндпоинт для внешних сервисов. Защищён заголовком `x-webhook-secret`. Дубли отсекаются по `idempotencyKey` (unique constraint → P2002 → 200 с `duplicate: true`).
+Входящий эндпоинт для внешних сервисов. Защищён заголовком `x-webhook-secret`. Повторный запрос с тем же `idempotencyKey` не создаёт дубль — вернёт 200 с `duplicate: true`.
 
 ```bash
 # Первый запрос → 201
